@@ -56,6 +56,7 @@
 <script>
     (function(){
         var Vue = require("vue/dist/vue");
+        var settings = require("../util/settings.js");
 
         module.exports = Vue.component("k-container", {
             data: function(){
@@ -72,6 +73,8 @@
                     self.folders.push({
                         name: "New Folder", path: "/new-folder",
                     });
+
+                    settings.set("folders", self.folders);
                 },
 
                 addPlaylist: function(){
@@ -79,7 +82,15 @@
                     self.playlists.push({
                         name: "New Playlist", path: "/new-playlist",
                     });
+
+                    settings.set("playlists", self.playlists);
                 },
+            },
+
+            mounted: function(){
+                var self = this;
+                self.folders = settings.get("folders") || [];
+                self.playlists = settings.get("playlists") || [];
             },
         });
     })();

@@ -59,6 +59,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 
 (function(){
     var Vue = require("vue/dist/vue");
+    var settings = require("../util/settings.js");
 
     module.exports = Vue.component("k-container", {
         data: function(){
@@ -75,6 +76,8 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 self.folders.push({
                     name: "New Folder", path: "/new-folder",
                 });
+
+                settings.set("folders", self.folders);
             },
 
             addPlaylist: function(){
@@ -82,7 +85,15 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 self.playlists.push({
                     name: "New Playlist", path: "/new-playlist",
                 });
+
+                settings.set("playlists", self.playlists);
             },
+        },
+
+        mounted: function(){
+            var self = this;
+            self.folders = settings.get("folders") || [];
+            self.playlists = settings.get("playlists") || [];
         },
     });
 })();
@@ -105,7 +116,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.rerender("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"vue":6,"vue-hot-reload-api":3,"vue/dist/vue":5,"vueify/lib/insert-css":7}],2:[function(require,module,exports){
+},{"../util/settings.js":3,"vue":7,"vue-hot-reload-api":4,"vue/dist/vue":6,"vueify/lib/insert-css":8}],2:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
@@ -124,7 +135,20 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	};
 })();
 
-},{"./components/k-container.vue":1,"vue-router":4,"vue/dist/vue":5}],3:[function(require,module,exports){
+},{"./components/k-container.vue":1,"vue-router":5,"vue/dist/vue":6}],3:[function(require,module,exports){
+(function(){
+    module.exports = {
+        set: function(key, value){
+            localStorage.setItem(key, JSON.stringify(value));
+        },
+
+        get: function(key){
+            return JSON.parse(localStorage.getItem(key));
+        },
+    };
+})();
+
+},{}],4:[function(require,module,exports){
 var Vue // late bind
 var version
 var map = (window.__VUE_HOT_MAP__ = Object.create(null))
@@ -354,7 +378,7 @@ exports.reload = tryWrap(function (id, options) {
   })
 })
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (process){
 /**
   * vue-router v3.0.1
@@ -2983,7 +3007,7 @@ if (inBrowser && window.Vue) {
 module.exports = VueRouter;
 
 }).call(this,require('_process'))
-},{"_process":8}],5:[function(require,module,exports){
+},{"_process":9}],6:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v2.5.9
@@ -13697,7 +13721,7 @@ return Vue$3;
 })));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.5.9
@@ -21561,7 +21585,7 @@ Vue$3.nextTick(function () {
 module.exports = Vue$3;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":8}],7:[function(require,module,exports){
+},{"_process":9}],8:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 function noop () {}
@@ -21586,7 +21610,7 @@ exports.insert = function (css) {
   }
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

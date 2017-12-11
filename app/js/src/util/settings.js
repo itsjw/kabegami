@@ -1,11 +1,11 @@
 (function(){
     module.exports = {
         set: function(key, value){
-            localStorage.setItem(key, value);
+            localStorage.setItem(key, JSON.stringify(value));
         },
 
         get: function(key){
-            return localStorage.getItem(key);
+            return JSON.parse(localStorage.getItem(key));
         },
     };
 })();
