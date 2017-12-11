@@ -1,5 +1,47 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-column[data-v-b2078738] {\n    background-color: rgb(235, 235, 235);\n    padding: 2rem;\n    min-height: 100%;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -11,7 +53,24 @@
     var Vue = require("vue/dist/vue");
 
     module.exports = Vue.component("k-container", {
-        
+        data: function(){
+            return {
+                menuIsToggled: false,
+
+                folders: [
+                    {name: "Folder A", path: "/a"},
+                    {name: "Folder B", path: "/b"},
+                    {name: "Folder C", path: "/c"},
+                ],
+
+                playlists: [
+                    {name: "Playlist 1", path: "/1"},
+                    {name: "Playlist 2", path: "/2"},
+                    {name: "Playlist 3", path: "/3"},
+                    {name: "Playlist 4", path: "/4"},
+                ],
+            };
+        },
     });
 })();
 
@@ -19,19 +78,21 @@
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v("\n    This is the k-container component.\n")])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns"},[_c('div',{staticClass:"column is-3",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},_vm._l((_vm.folders),function(folder){return _c('li',[_c('router-link',{attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)})),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},_vm._l((_vm.playlists),function(playlist){return _c('li',[_c('router-link',{attrs:{"to":playlist.path}},[_vm._v("\n                            "+_vm._s(playlist.name)+"\n                        ")])],1)}))])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view')],1)])])])}
 __vue__options__.staticRenderFns = []
+__vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.accept()
+  module.hot.dispose(__vueify_style_dispose__)
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.reload("data-v-b2078738", __vue__options__)
+    hotAPI.rerender("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"vue":6,"vue-hot-reload-api":3,"vue/dist/vue":5}],2:[function(require,module,exports){
+},{"vue":6,"vue-hot-reload-api":3,"vue/dist/vue":5,"vueify/lib/insert-css":7}],2:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
@@ -2909,7 +2970,7 @@ if (inBrowser && window.Vue) {
 module.exports = VueRouter;
 
 }).call(this,require('_process'))
-},{"_process":7}],5:[function(require,module,exports){
+},{"_process":8}],5:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v2.5.9
@@ -21487,7 +21548,32 @@ Vue$3.nextTick(function () {
 module.exports = Vue$3;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":7}],7:[function(require,module,exports){
+},{"_process":8}],7:[function(require,module,exports){
+var inserted = exports.cache = {}
+
+function noop () {}
+
+exports.insert = function (css) {
+  if (inserted[css]) return noop
+  inserted[css] = true
+
+  var elem = document.createElement('style')
+  elem.setAttribute('type', 'text/css')
+
+  if ('textContent' in elem) {
+    elem.textContent = css
+  } else {
+    elem.styleSheet.cssText = css
+  }
+
+  document.getElementsByTagName('head')[0].appendChild(elem)
+  return function () {
+    document.getElementsByTagName('head')[0].removeChild(elem)
+    inserted[css] = false
+  }
+}
+
+},{}],8:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
