@@ -8,8 +8,8 @@
 
 <template>
     <div>
-        <div class="columns">
-            <div class="column is-3" id="menu-column">
+        <div class="columns is-mobile">
+            <div class="column is-narrow" id="menu-column">
                 <aside class="menu">
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
