@@ -60,6 +60,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 (function(){
     var Vue = require("vue/dist/vue");
     var settings = require("../util/settings.js");
+    var remote = window.require("electron").remote;
 
     module.exports = Vue.component("k-container", {
         data: function(){
@@ -73,10 +74,11 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
         methods: {
             addFolder: function(){
                 var self = this;
-                self.folders.push({
-                    name: "New Folder", path: "/new-folder",
-                });
-
+                var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
+                var path = results[0];
+                var parts = path.split("/");
+                var name = parts[parts.length-1];
+                self.folders.push({name, path});
                 settings.set("folders", self.folders);
             },
 
