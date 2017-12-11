@@ -1,0 +1,11 @@
+{
+  "name": "kabegami",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "jrc03c",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.7.9"
+  }
+}
