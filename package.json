@@ -1,11 +1,17 @@
 {
-  "name": "kabegami",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "author": "jrc03c",
-  "license": "ISC",
-  "dependencies": {
-    "electron": "^1.7.9"
-  }
+    "name": "kabegami",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "author": "jrc03c",
+    "license": "ISC",
+    "dependencies": {
+        "electron": "^1.7.9",
+        "vue-router": "^3.0.1",
+        "vueify": "^9.4.1",
+        "vuejs": "^2.0.14"
+    },
+    "scripts": {
+        "build": "watchify app/js/src/index.js -o app/js/bundle.js"
+    }
 }
