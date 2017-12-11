@@ -8,7 +8,6 @@
     "dependencies": {
         "bulma": "^0.6.1",
         "electron": "^1.7.9",
-        "material-design-lite": "^1.3.0",
         "vue-router": "^3.0.1",
         "vueify": "^9.4.1",
         "vuejs": "^2.0.14"
