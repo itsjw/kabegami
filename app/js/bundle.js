@@ -46,6 +46,16 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 (function(){
     var Vue = require("vue/dist/vue");
@@ -54,20 +64,25 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
         data: function(){
             return {
                 menuIsToggled: false,
-
-                folders: [
-                    {name: "Folder A", path: "/a"},
-                    {name: "Folder B", path: "/b"},
-                    {name: "Folder C", path: "/c"},
-                ],
-
-                playlists: [
-                    {name: "Playlist 1", path: "/1"},
-                    {name: "Playlist 2", path: "/2"},
-                    {name: "Playlist 3", path: "/3"},
-                    {name: "Playlist 4", path: "/4"},
-                ],
+                folders: [],
+                playlists: [],
             };
+        },
+
+        methods: {
+            addFolder: function(){
+                var self = this;
+                self.folders.push({
+                    name: "New Folder", path: "/new-folder",
+                });
+            },
+
+            addPlaylist: function(){
+                var self = this;
+                self.playlists.push({
+                    name: "New Playlist", path: "/new-playlist",
+                });
+            },
         },
     });
 })();
@@ -76,7 +91,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},_vm._l((_vm.folders),function(folder){return _c('li',[_c('router-link',{attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)})),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},_vm._l((_vm.playlists),function(playlist){return _c('li',[_c('router-link',{attrs:{"to":playlist.path}},[_vm._v("\n                            "+_vm._s(playlist.name)+"\n                        ")])],1)}))])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view')],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',[_c('router-link',{attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.playlists),function(playlist){return _c('li',[_c('router-link',{attrs:{"to":playlist.path}},[_vm._v("\n                            "+_vm._s(playlist.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addPlaylist}},[_vm._v("\n                            Create playlist...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view')],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")

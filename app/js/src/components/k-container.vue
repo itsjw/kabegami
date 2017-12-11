@@ -21,6 +21,11 @@
                                 {{ folder.name }}
                             </router-link>
                         </li>
+                        <li>
+                            <a @click="addFolder">
+                                Import folder...
+                            </a>
+                        </li>
                     </ul>
 
                     <p class="menu-label">Playlists</p>
@@ -29,6 +34,11 @@
                             <router-link :to="playlist.path">
                                 {{ playlist.name }}
                             </router-link>
+                        </li>
+                        <li>
+                            <a @click="addPlaylist">
+                                Create playlist...
+                            </a>
                         </li>
                     </ul>
                 </aside>
@@ -51,20 +61,25 @@
             data: function(){
                 return {
                     menuIsToggled: false,
-
-                    folders: [
-                        {name: "Folder A", path: "/a"},
-                        {name: "Folder B", path: "/b"},
-                        {name: "Folder C", path: "/c"},
-                    ],
-
-                    playlists: [
-                        {name: "Playlist 1", path: "/1"},
-                        {name: "Playlist 2", path: "/2"},
-                        {name: "Playlist 3", path: "/3"},
-                        {name: "Playlist 4", path: "/4"},
-                    ],
+                    folders: [],
+                    playlists: [],
                 };
+            },
+
+            methods: {
+                addFolder: function(){
+                    var self = this;
+                    self.folders.push({
+                        name: "New Folder", path: "/new-folder",
+                    });
+                },
+
+                addPlaylist: function(){
+                    var self = this;
+                    self.playlists.push({
+                        name: "New Playlist", path: "/new-playlist",
+                    });
+                },
             },
         });
     })();
