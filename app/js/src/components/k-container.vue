@@ -1,8 +1,6 @@
 <style scoped>
     #menu-column {
-        background-color: rgb(235, 235, 235);
         padding: 2rem;
-        min-height: 100%;
     }
 </style>
 
