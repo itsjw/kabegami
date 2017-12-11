@@ -6,6 +6,7 @@
     "author": "jrc03c",
     "license": "ISC",
     "dependencies": {
+        "bulma": "^0.6.1",
         "electron": "^1.7.9",
         "material-design-lite": "^1.3.0",
         "vue-router": "^3.0.1",
