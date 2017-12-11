@@ -75,6 +75,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
             addFolder: function(){
                 var self = this;
                 var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
+                if (!results) return;
                 var path = results[0];
                 var parts = path.split("/");
                 var name = parts[parts.length-1];
