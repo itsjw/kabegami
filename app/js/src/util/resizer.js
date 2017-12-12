@@ -1,5 +1,7 @@
 (function(){
     var Jimp = require("jimp");
+    var os = require("os");
+    var DIR = os.homedir() + "/.kabegami";
 
     self.onmessage = function(message){
         var url = message.data;
@@ -9,8 +11,12 @@
 
             img.resize(100, 67).quality(100);
 
-            img.getBase64(img.getMIME(), function(error2, data){
-                self.postMessage(data);
+            var name = url.split("/").join("-");
+            var path = DIR + "/thumbs/" + name;
+
+            img.write(path, function(error){
+                if (error) console.error(error);
+                self.postMessage(path);
             });
         });
     }
