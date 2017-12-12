@@ -149,9 +149,24 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 
 (function(){
     var Vue = require("vue/dist/vue");
+    var fs = window.require("fs");
+    var rimraf = window.require("rimraf");
 
     module.exports = Vue.component("k-settings", {
-
+        methods: {
+            deleteAllSettings: function(){
+                if (fs.existsSync(DIR)){
+                    rimraf(DIR, function(error){
+                        if (error) console.error(error);
+                        localStorage.clear();
+                        window.location.reload();
+                    });
+                } else {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            },
+        },
     });
 })();
 
@@ -159,7 +174,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v("\n    This is the settings page.\n")])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('button',{staticClass:"button is-danger",on:{"click":_vm.deleteAllSettings}},[_vm._v("Reset to factory defaults!")])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -168,7 +183,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-e6824be0", __vue__options__)
   } else {
-    hotAPI.reload("data-v-e6824be0", __vue__options__)
+    hotAPI.rerender("data-v-e6824be0", __vue__options__)
   }
 })()}
 },{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],3:[function(require,module,exports){
@@ -293,11 +308,14 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
+    hotAPI.reload("data-v-c2e9d962", __vue__options__)
   }
 })()}
 },{"../util/settings.js":6,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],5:[function(require,module,exports){
 (function(){
+	var os = window.require("os");
+	window.DIR = os.homedir() + "/.kabegami";
+
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
 	Vue.use(VueRouter);

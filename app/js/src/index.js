@@ -1,4 +1,7 @@
 (function(){
+	var os = window.require("os");
+	window.DIR = os.homedir() + "/.kabegami";
+
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
 	Vue.use(VueRouter);
