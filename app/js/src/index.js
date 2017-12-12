@@ -9,7 +9,7 @@
 	var KThumbnailList = require("./components/k-thumbnail-list.vue");
 
 	var routes = [
-		{path: "/list/:thumbnails", component: KThumbnailList, props: true},
+		{path: "/list", component: KThumbnailList},
 		{path: "/settings", component: KSettings},
 	];
 	var router = new VueRouter({routes});

@@ -1,6 +1,10 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current-folder[data-v-b2078738], .current-folder[data-v-b2078738]:hover {\n    color: red !important;\n}\n\n#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current-folder[data-v-b2078738], .current-folder[data-v-b2078738]:hover {\n    color: red !important;\n}\n\n#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}\n\n#router-view[data-v-b2078738] {\n    padding: 2rem;\n}")
 ;(function(){
+//
+//
+//
+//
 //
 //
 //
@@ -51,7 +55,9 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
     var Vue = require("vue/dist/vue");
     var settings = require("../util/settings.js");
     var remote = window.require("electron").remote;
+    var fs = window.require("fs");
     var KThumbnailList = require("./k-thumbnail-list.vue");
+    var extensions = ["jpg", "jpeg", "png", "bmp"];
 
     module.exports = Vue.component("k-container", {
         data: function(){
@@ -71,8 +77,10 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
                 var path = results[0];
                 var parts = path.split("/");
                 var name = parts[parts.length-1];
-                self.folders.push({name, path});
+                var folder = {name, path};
+                self.folders.push(folder);
                 settings.set("folders", self.folders);
+                self.setCurrentFolder(folder);
             },
 
             setCurrentFolder: function(folder){
@@ -82,7 +90,24 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
             },
 
             loadThumbnails: function(){
+                var self = this;
+
                 self.thumbnails = [];
+
+                fs.readdir(self.currentFolder.path, function(error, files){
+                    if (error) console.error(error);
+
+                    files.forEach(function(file){
+                        var parts = file.split(".");
+                        var ext = parts[parts.length-1].toLowerCase();
+
+                        if (extensions.indexOf(ext) > -1){
+                            self.thumbnails.push(self.currentFolder.path + "/" + file);
+                        }
+                    });
+
+                    self.$router.push("/list");
+                });
             },
         },
 
@@ -99,7 +124,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.setCurrentFolder(folder)}}},[_c('router-link',{class:{'current-folder': folder === _vm.currentFolder},attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.setCurrentFolder(folder)}}},[_c('router-link',{class:{'current-folder': folder === _vm.currentFolder},attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -147,7 +172,14 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   }
 })()}
 },{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],3:[function(require,module,exports){
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbnail-list[data-v-988c3de8] {\n    line-height: 0;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -173,20 +205,30 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',_vm._l((_vm.thumbnails),function(thumbnail){return _c('k-thumbnail',{attrs:{"thumbnail":thumbnail}})}))}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},_vm._l((_vm.thumbnails),function(thumbnail){return _c('k-thumbnail',{attrs:{"thumbnail":thumbnail}})}))}
 __vue__options__.staticRenderFns = []
+__vue__options__._scopeId = "data-v-988c3de8"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.accept()
+  module.hot.dispose(__vueify_style_dispose__)
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
     hotAPI.reload("data-v-988c3de8", __vue__options__)
   }
 })()}
-},{"./k-thumbnail.vue":4,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],4:[function(require,module,exports){
+},{"./k-thumbnail.vue":4,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],4:[function(require,module,exports){
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    width: 100px;\n    height: 67px;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -211,19 +253,21 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v("\n    "+_vm._s(_vm.thumbnail)+"\n")])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{attrs:{"src":_vm.thumbnail}})])}
 __vue__options__.staticRenderFns = []
+__vue__options__._scopeId = "data-v-c2e9d962"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.accept()
+  module.hot.dispose(__vueify_style_dispose__)
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
     hotAPI.reload("data-v-c2e9d962", __vue__options__)
   }
 })()}
-},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],5:[function(require,module,exports){
+},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],5:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
@@ -235,7 +279,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	var KThumbnailList = require("./components/k-thumbnail-list.vue");
 
 	var routes = [
-		{path: "/list/:thumbnails", component: KThumbnailList, props: true},
+		{path: "/list", component: KThumbnailList},
 		{path: "/settings", component: KSettings},
 	];
 	var router = new VueRouter({routes});

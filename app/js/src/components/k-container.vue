@@ -6,6 +6,10 @@
     #menu-column {
         padding: 2rem;
     }
+
+    #router-view {
+        padding: 2rem;
+    }
 </style>
 
 <template>
@@ -34,7 +38,7 @@
                 </aside>
             </div>
 
-            <div class="column is-9">
+            <div class="column is-9" id="router-view">
                 <div class="container">
                     <router-view :thumbnails="thumbnails"></router-view>
                 </div>
@@ -48,7 +52,9 @@
         var Vue = require("vue/dist/vue");
         var settings = require("../util/settings.js");
         var remote = window.require("electron").remote;
+        var fs = window.require("fs");
         var KThumbnailList = require("./k-thumbnail-list.vue");
+        var extensions = ["jpg", "jpeg", "png", "bmp"];
 
         module.exports = Vue.component("k-container", {
             data: function(){
@@ -68,8 +74,10 @@
                     var path = results[0];
                     var parts = path.split("/");
                     var name = parts[parts.length-1];
-                    self.folders.push({name, path});
+                    var folder = {name, path};
+                    self.folders.push(folder);
                     settings.set("folders", self.folders);
+                    self.setCurrentFolder(folder);
                 },
 
                 setCurrentFolder: function(folder){
@@ -79,7 +87,24 @@
                 },
 
                 loadThumbnails: function(){
+                    var self = this;
+
                     self.thumbnails = [];
+
+                    fs.readdir(self.currentFolder.path, function(error, files){
+                        if (error) console.error(error);
+
+                        files.forEach(function(file){
+                            var parts = file.split(".");
+                            var ext = parts[parts.length-1].toLowerCase();
+
+                            if (extensions.indexOf(ext) > -1){
+                                self.thumbnails.push(self.currentFolder.path + "/" + file);
+                            }
+                        });
+
+                        self.$router.push("/list");
+                    });
                 },
             },
 

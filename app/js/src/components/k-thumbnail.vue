@@ -1,7 +1,14 @@
+<style scoped>
+    img {
+        width: 100px;
+        height: 67px;
+    }
+</style>
+
 <template>
-    <div>
-        {{ thumbnail }}
-    </div>
+    <span>
+        <img :src="thumbnail">
+    </span>
 </template>
 
 <script>

@@ -1,5 +1,11 @@
+<style scoped>
+    #thumbnail-list {
+        line-height: 0;
+    }
+</style>
+
 <template>
-    <div>
+    <div id="thumbnail-list">
         <k-thumbnail v-for="thumbnail in thumbnails" :thumbnail="thumbnail"></k-thumbnail>
     </div>
 </template>
