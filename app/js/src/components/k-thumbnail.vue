@@ -7,7 +7,7 @@
 
 <template>
     <span>
-        <img :src="realThumbnail">
+        <img :src="thumbnail">
     </span>
 </template>
 
@@ -22,34 +22,6 @@
                     type: String, // path to thumbnail
                     required: true,
                 },
-            },
-
-            data: function(){
-                return {
-                    realThumbnail: "",
-                };
-            },
-
-            mounted: function(){
-                var self = this;
-
-                // check first to see if a thumbnail is in storage
-                var thumbnails = settings.get("thumbnails");
-                if (!thumbnails) thumbnails = {};
-                if (thumbnails[self.thumbnail]) self.realThumbnail = thumbnails[self.thumbnail];
-
-                // if it doesn't exist, then...
-                if (!self.realThumbnail){
-                    var worker = new Worker("js/src/util/resizer.js");
-
-                    worker.onmessage = function(message){
-                        self.realThumbnail = message.data;
-                        thumbnails[self.thumbnail] = self.realThumbnail;
-                        settings.set("thumbnails", thumbnails);
-                    };
-                    
-                    worker.postMessage(self.thumbnail);
-                }
             },
         });
     })();
