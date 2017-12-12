@@ -1,16 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current-folder[data-v-b2078738], .current-folder[data-v-b2078738]:hover {\n    color: red !important;\n}\n\n#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}")
 ;(function(){
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -61,13 +51,15 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
     var Vue = require("vue/dist/vue");
     var settings = require("../util/settings.js");
     var remote = window.require("electron").remote;
+    var KThumbnailList = require("./k-thumbnail-list.vue");
 
     module.exports = Vue.component("k-container", {
         data: function(){
             return {
                 menuIsToggled: false,
                 folders: [],
-                playlists: [],
+                currentFolder: null,
+                thumbnails: [],
             };
         },
 
@@ -83,20 +75,22 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 settings.set("folders", self.folders);
             },
 
-            addPlaylist: function(){
+            setCurrentFolder: function(folder){
                 var self = this;
-                self.playlists.push({
-                    name: "New Playlist", path: "/new-playlist",
-                });
+                self.currentFolder = folder;
+                self.loadThumbnails();
+            },
 
-                settings.set("playlists", self.playlists);
+            loadThumbnails: function(){
+                self.thumbnails = [];
             },
         },
 
         mounted: function(){
             var self = this;
             self.folders = settings.get("folders") || [];
-            self.playlists = settings.get("playlists") || [];
+            self.currentFolder = settings.get("current-folder") || null;
+            if (self.currentFolder) self.loadThumbnails();
         },
     });
 })();
@@ -105,7 +99,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',[_c('router-link',{attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.playlists),function(playlist){return _c('li',[_c('router-link',{attrs:{"to":playlist.path}},[_vm._v("\n                            "+_vm._s(playlist.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addPlaylist}},[_vm._v("\n                            Create playlist...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view')],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.setCurrentFolder(folder)}}},[_c('router-link',{class:{'current-folder': folder === _vm.currentFolder},attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9"},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -116,10 +110,10 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.reload("data-v-b2078738", __vue__options__)
+    hotAPI.rerender("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"../util/settings.js":4,"vue":8,"vue-hot-reload-api":5,"vue/dist/vue":7,"vueify/lib/insert-css":9}],2:[function(require,module,exports){
+},{"../util/settings.js":6,"./k-thumbnail-list.vue":3,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],2:[function(require,module,exports){
 ;(function(){
 //
 //
@@ -152,16 +146,96 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.reload("data-v-e6824be0", __vue__options__)
   }
 })()}
-},{"vue":8,"vue-hot-reload-api":5,"vue/dist/vue":7}],3:[function(require,module,exports){
+},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],3:[function(require,module,exports){
+;(function(){
+//
+//
+//
+//
+//
+//
+
+(function(){
+    var Vue = require("vue/dist/vue");
+    var KThumbnail = require("./k-thumbnail.vue");
+
+    module.exports = Vue.component("k-thumbnail-list", {
+        props: {
+            thumbnails: {
+                type: Array,
+                required: true,
+            },
+        },
+    });
+})();
+
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',_vm._l((_vm.thumbnails),function(thumbnail){return _c('k-thumbnail',{attrs:{"thumbnail":thumbnail}})}))}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-988c3de8", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-988c3de8", __vue__options__)
+  }
+})()}
+},{"./k-thumbnail.vue":4,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],4:[function(require,module,exports){
+;(function(){
+//
+//
+//
+//
+//
+//
+
+(function(){
+    var Vue = require("vue/dist/vue");
+
+    module.exports = Vue.component("k-thumbnail", {
+        props: {
+            thumbnail: {
+                type: String, // path to thumbnail
+                required: true,
+            },
+        },
+    });
+})();
+
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v("\n    "+_vm._s(_vm.thumbnail)+"\n")])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-c2e9d962", __vue__options__)
+  }
+})()}
+},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],5:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
 	Vue.use(VueRouter);
+	var settings = require("./util/settings.js");
 
 	var KContainer = require("./components/k-container.vue");
 	var KSettings = require("./components/k-settings.vue");
+	var KThumbnailList = require("./components/k-thumbnail-list.vue");
 
 	var routes = [
+		{path: "/list/:thumbnails", component: KThumbnailList, props: true},
 		{path: "/settings", component: KSettings},
 	];
 	var router = new VueRouter({routes});
@@ -174,7 +248,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	};
 })();
 
-},{"./components/k-container.vue":1,"./components/k-settings.vue":2,"vue-router":6,"vue/dist/vue":7}],4:[function(require,module,exports){
+},{"./components/k-container.vue":1,"./components/k-settings.vue":2,"./components/k-thumbnail-list.vue":3,"./util/settings.js":6,"vue-router":8,"vue/dist/vue":9}],6:[function(require,module,exports){
 (function(){
     module.exports = {
         set: function(key, value){
@@ -187,7 +261,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     };
 })();
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var Vue // late bind
 var version
 var map = (window.__VUE_HOT_MAP__ = Object.create(null))
@@ -417,7 +491,7 @@ exports.reload = tryWrap(function (id, options) {
   })
 })
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process){
 /**
   * vue-router v3.0.1
@@ -3046,7 +3120,7 @@ if (inBrowser && window.Vue) {
 module.exports = VueRouter;
 
 }).call(this,require('_process'))
-},{"_process":10}],7:[function(require,module,exports){
+},{"_process":12}],9:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v2.5.9
@@ -13760,7 +13834,7 @@ return Vue$3;
 })));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.5.9
@@ -21624,7 +21698,7 @@ Vue$3.nextTick(function () {
 module.exports = Vue$3;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":10}],9:[function(require,module,exports){
+},{"_process":12}],11:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 function noop () {}
@@ -21649,7 +21723,7 @@ exports.insert = function (css) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -21835,4 +21909,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[3]);
+},{}]},{},[5]);

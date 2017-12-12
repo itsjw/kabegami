@@ -1,4 +1,8 @@
 <style scoped>
+    .current-folder, .current-folder:hover {
+        color: red !important;
+    }
+
     #menu-column {
         padding: 2rem;
     }
@@ -16,8 +20,8 @@
 
                     <p class="menu-label">Folders</p>
                     <ul class="menu-list">
-                        <li v-for="folder in folders">
-                            <router-link :to="folder.path">
+                        <li v-for="folder in folders" @click="setCurrentFolder(folder)">
+                            <router-link :to="folder.path" :class="{'current-folder': folder === currentFolder}">
                                 {{ folder.name }}
                             </router-link>
                         </li>
@@ -27,26 +31,12 @@
                             </a>
                         </li>
                     </ul>
-
-                    <p class="menu-label">Playlists</p>
-                    <ul class="menu-list">
-                        <li v-for="playlist in playlists">
-                            <router-link :to="playlist.path">
-                                {{ playlist.name }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <a @click="addPlaylist">
-                                Create playlist...
-                            </a>
-                        </li>
-                    </ul>
                 </aside>
             </div>
 
             <div class="column is-9">
                 <div class="container">
-                    <router-view></router-view>
+                    <router-view :thumbnails="thumbnails"></router-view>
                 </div>
             </div>
         </div>
@@ -58,13 +48,15 @@
         var Vue = require("vue/dist/vue");
         var settings = require("../util/settings.js");
         var remote = window.require("electron").remote;
+        var KThumbnailList = require("./k-thumbnail-list.vue");
 
         module.exports = Vue.component("k-container", {
             data: function(){
                 return {
                     menuIsToggled: false,
                     folders: [],
-                    playlists: [],
+                    currentFolder: null,
+                    thumbnails: [],
                 };
             },
 
@@ -80,20 +72,22 @@
                     settings.set("folders", self.folders);
                 },
 
-                addPlaylist: function(){
+                setCurrentFolder: function(folder){
                     var self = this;
-                    self.playlists.push({
-                        name: "New Playlist", path: "/new-playlist",
-                    });
+                    self.currentFolder = folder;
+                    self.loadThumbnails();
+                },
 
-                    settings.set("playlists", self.playlists);
+                loadThumbnails: function(){
+                    self.thumbnails = [];
                 },
             },
 
             mounted: function(){
                 var self = this;
                 self.folders = settings.get("folders") || [];
-                self.playlists = settings.get("playlists") || [];
+                self.currentFolder = settings.get("current-folder") || null;
+                if (self.currentFolder) self.loadThumbnails();
             },
         });
     })();
