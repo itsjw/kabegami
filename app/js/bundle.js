@@ -135,7 +135,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-b2078738", __vue__options__)
+    hotAPI.reload("data-v-b2078738", __vue__options__)
   }
 })()}
 },{"../util/settings.js":6,"./k-thumbnail-list.vue":3,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],2:[function(require,module,exports){
@@ -238,6 +238,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data
 
 (function(){
     var Vue = require("vue/dist/vue");
+    var settings = require("../util/settings.js");
 
     module.exports = Vue.component("k-thumbnail", {
         props: {
@@ -246,6 +247,34 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data
                 required: true,
             },
         },
+
+        data: function(){
+            return {
+                realThumbnail: "",
+            };
+        },
+
+        mounted: function(){
+            var self = this;
+
+            // check first to see if a thumbnail is in storage
+            var thumbnails = settings.get("thumbnails");
+            if (!thumbnails) thumbnails = {};
+            if (thumbnails[self.thumbnail]) self.realThumbnail = thumbnails[self.thumbnail];
+
+            // if it doesn't exist, then...
+            if (!self.realThumbnail){
+                var worker = new Worker("js/src/util/resizer.js");
+
+                worker.onmessage = function(message){
+                    self.realThumbnail = message.data;
+                    thumbnails[self.thumbnail] = self.realThumbnail;
+                    settings.set("thumbnails", thumbnails);
+                };
+                
+                worker.postMessage(self.thumbnail);
+            }
+        },
     });
 })();
 
@@ -253,7 +282,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{attrs:{"src":_vm.thumbnail}})])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('span',[_c('img',{attrs:{"src":_vm.realThumbnail}})])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-c2e9d962"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -264,10 +293,10 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.reload("data-v-c2e9d962", __vue__options__)
+    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
   }
 })()}
-},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],5:[function(require,module,exports){
+},{"../util/settings.js":6,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],5:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");

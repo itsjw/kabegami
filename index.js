@@ -8,7 +8,13 @@
     var win;
 
     function setup(){
-        win = new BrowserWindow({width: 1024, height: 600});
+        win = new BrowserWindow({
+            width: 1024,
+            height: 600,
+            webPreferences: {
+                nodeIntegrationInWorker: true,
+            },
+        });
 
         win.loadURL(url.format({
             pathname: path.join(__dirname, "/app/index.html"),
