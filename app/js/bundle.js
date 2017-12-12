@@ -116,18 +116,54 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-b2078738", __vue__options__)
+    hotAPI.reload("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"../util/settings.js":3,"vue":7,"vue-hot-reload-api":4,"vue/dist/vue":6,"vueify/lib/insert-css":8}],2:[function(require,module,exports){
+},{"../util/settings.js":4,"vue":8,"vue-hot-reload-api":5,"vue/dist/vue":7,"vueify/lib/insert-css":9}],2:[function(require,module,exports){
+;(function(){
+//
+//
+//
+//
+//
+//
+
+(function(){
+    var Vue = require("vue/dist/vue");
+
+    module.exports = Vue.component("k-settings", {
+
+    });
+})();
+
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_vm._v("\n    This is the settings page.\n")])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e6824be0", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-e6824be0", __vue__options__)
+  }
+})()}
+},{"vue":8,"vue-hot-reload-api":5,"vue/dist/vue":7}],3:[function(require,module,exports){
 (function(){
 	var Vue = require("vue/dist/vue");
 	var VueRouter = require("vue-router");
 	Vue.use(VueRouter);
 
 	var KContainer = require("./components/k-container.vue");
+	var KSettings = require("./components/k-settings.vue");
 
-	var routes = [];
+	var routes = [
+		{path: "/settings", component: KSettings},
+	];
 	var router = new VueRouter({routes});
 
 	window.onload = function(){
@@ -138,7 +174,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	};
 })();
 
-},{"./components/k-container.vue":1,"vue-router":5,"vue/dist/vue":6}],3:[function(require,module,exports){
+},{"./components/k-container.vue":1,"./components/k-settings.vue":2,"vue-router":6,"vue/dist/vue":7}],4:[function(require,module,exports){
 (function(){
     module.exports = {
         set: function(key, value){
@@ -151,7 +187,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     };
 })();
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Vue // late bind
 var version
 var map = (window.__VUE_HOT_MAP__ = Object.create(null))
@@ -381,7 +417,7 @@ exports.reload = tryWrap(function (id, options) {
   })
 })
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (process){
 /**
   * vue-router v3.0.1
@@ -3010,7 +3046,7 @@ if (inBrowser && window.Vue) {
 module.exports = VueRouter;
 
 }).call(this,require('_process'))
-},{"_process":9}],6:[function(require,module,exports){
+},{"_process":10}],7:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v2.5.9
@@ -13724,7 +13760,7 @@ return Vue$3;
 })));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.5.9
@@ -21588,7 +21624,7 @@ Vue$3.nextTick(function () {
 module.exports = Vue$3;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":9}],8:[function(require,module,exports){
+},{"_process":10}],9:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 function noop () {}
@@ -21613,7 +21649,7 @@ exports.insert = function (css) {
   }
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -21799,4 +21835,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[2]);
+},{}]},{},[3]);

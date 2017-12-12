@@ -4,8 +4,11 @@
 	Vue.use(VueRouter);
 
 	var KContainer = require("./components/k-container.vue");
+	var KSettings = require("./components/k-settings.vue");
 
-	var routes = [];
+	var routes = [
+		{path: "/settings", component: KSettings},
+	];
 	var router = new VueRouter({routes});
 
 	window.onload = function(){
