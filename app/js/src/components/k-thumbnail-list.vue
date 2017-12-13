@@ -9,7 +9,8 @@
         <k-thumbnail
             v-for="img in images"
             :thumbnail="img.thumbnail"
-            @set-as-wallpaper="setAsWallpaper(img.fullsize)">
+            @set-as-wallpaper="setAsWallpaper(img)"
+            :is-active="selected === img">
         </k-thumbnail>
     </div>
 </template>
@@ -35,12 +36,14 @@
             data: function(){
                 return {
                     images: [],
+                    selected: null,
                 };
             },
 
             methods: {
-                setAsWallpaper: function(fullsize){
+                setAsWallpaper: function(img){
                     var self = this;
+                    self.selected = img;
 
                     var command = settings.get("command");
 
@@ -48,7 +51,7 @@
                         alert("You haven't yet set the 'set wallpaper' command in the settings. Please do that first.");
                         self.$router.push("/settings");
                     } else {
-                        command = command.replace("$wallpaper", fullsize);
+                        command = command.replace("$wallpaper", img.fullsize);
                         exec(command);
                     }
                 },

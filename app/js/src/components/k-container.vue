@@ -1,6 +1,6 @@
 <style scoped>
     .current-folder, .current-folder:hover {
-        color: red !important;
+        color: #ff3860 !important;
     }
 
     #menu-column {
