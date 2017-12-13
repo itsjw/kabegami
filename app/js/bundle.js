@@ -139,7 +139,40 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   }
 })()}
 },{"../util/settings.js":6,"./k-thumbnail-list.vue":3,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],2:[function(require,module,exports){
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#command-input[data-v-e6824be0] {\n    font-family: monospace;\n}\n\n.control[data-v-e6824be0] {\n    margin-bottom: 0.5rem;\n}\n\np[data-v-e6824be0] {\n    margin-bottom: 1.5rem;\n}\n\npre[data-v-e6824be0] {\n    margin-bottom: 1.5rem;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -151,8 +184,21 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     var Vue = require("vue/dist/vue");
     var fs = window.require("fs");
     var rimraf = window.require("rimraf");
+    var settings = require("../util/settings.js");
 
     module.exports = Vue.component("k-settings", {
+        data: function(){
+            return {
+                command: "",
+            };
+        },
+
+        watch: {
+            command: function(val){
+                settings.set("command", val);
+            },
+        },
+
         methods: {
             deleteAllSettings: function(){
                 if (fs.existsSync(DIR)){
@@ -174,19 +220,21 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('button',{staticClass:"button is-danger",on:{"click":_vm.deleteAllSettings}},[_vm._v("Reset to factory defaults!")])])}
-__vue__options__.staticRenderFns = []
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"field-body"},[_c('div',{staticClass:"field"},[_c('p',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.command),expression:"command"}],staticClass:"input",attrs:{"id":"command-input","type":"text","placeholder":"Command to set wallpaper..."},domProps:{"value":(_vm.command)},on:{"input":function($event){if($event.target.composing){ return; }_vm.command=$event.target.value}}})])])])]),_vm._v(" "),_vm._m(0,false,false),_vm._v(" "),_c('pre',[_vm._v("set-wallpaper $wallpaper")]),_vm._v(" "),_c('button',{staticClass:"button is-danger",on:{"click":_vm.deleteAllSettings}},[_vm._v("Reset to factory defaults!")])])}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',[_c('i',[_vm._v("HINT: Use "),_c('code',[_vm._v("$wallpaper")]),_vm._v(" as the variable for the path. For example:")])])}]
+__vue__options__._scopeId = "data-v-e6824be0"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.accept()
+  module.hot.dispose(__vueify_style_dispose__)
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-e6824be0", __vue__options__)
   } else {
     hotAPI.reload("data-v-e6824be0", __vue__options__)
   }
 })()}
-},{"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9}],3:[function(require,module,exports){
+},{"../util/settings.js":6,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],3:[function(require,module,exports){
 var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbnail-list[data-v-988c3de8] {\n    line-height: 0;\n}")
 ;(function(){
 //
