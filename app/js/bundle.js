@@ -87,6 +87,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
                 var self = this;
                 self.currentFolder = folder;
                 self.loadThumbnails();
+                settings.set("current-folder", folder);
             },
 
             loadThumbnails: function(){
@@ -114,7 +115,14 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
         mounted: function(){
             var self = this;
             self.folders = settings.get("folders") || [];
-            self.currentFolder = settings.get("current-folder") || null;
+            var current = settings.get("current-folder") || null;
+
+            self.folders.forEach(function(folder){
+                if (current && folder.path === current.path){
+                    self.currentFolder = folder;
+                }
+            });
+
             if (self.currentFolder) self.loadThumbnails();
         },
     });
@@ -124,7 +132,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.setCurrentFolder(folder)}}},[_c('router-link',{class:{'current-folder': folder === _vm.currentFolder},attrs:{"to":folder.path}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])],1)}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.setCurrentFolder(folder)}}},[_c('a',{class:{'current-folder': folder === _vm.currentFolder}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -284,7 +292,57 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
             };
         },
 
+        watch: {
+            thumbnails: {
+                deep: true,
+                handler: function(){
+                    var self = this;
+                    self.images = [];
+                    self.loadThumbnails();
+                },
+            },
+        },
+
         methods: {
+            loadThumbnails: function(){
+                var self = this;
+                var storedThumbs = settings.get("thumbnails");
+                if (!storedThumbs) storedThumbs = {};
+
+                self.thumbnails.forEach(function(thumbnail){
+                    var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
+
+                    if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
+                        var t = setInterval(function(){
+                            if (threadCount > 1) return;
+
+                            threadCount++;
+
+                            var worker = new Worker("js/src/util/resizer.js");
+
+                            worker.onmessage = function(message){
+                                self.images.push({
+                                    fullsize: thumbnail,
+                                    thumbnail: message.data,
+                                });
+                                storedThumbs[thumbnail] = message.data;
+                                settings.set("thumbnails", storedThumbs);
+                                threadCount--;
+                                worker.terminate();
+                            };
+
+                            worker.postMessage(thumbnail);
+                            clearInterval(t);
+                        }, 100);
+                    } else {
+                        self.images.push({
+                            fullsize: thumbnail,
+                            thumbnail: storedThumbs[thumbnail],
+                        });
+                    }
+                });
+            },
+
             setAsWallpaper: function(img){
                 var self = this;
                 self.selected = img;
@@ -303,42 +361,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
         mounted: function(){
             var self = this;
-            var storedThumbs = settings.get("thumbnails");
-            if (!storedThumbs) storedThumbs = {};
-
-            self.thumbnails.forEach(function(thumbnail){
-                var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
-
-                if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
-                    var t = setInterval(function(){
-                        if (threadCount > 1) return;
-
-                        threadCount++;
-
-                        var worker = new Worker("js/src/util/resizer.js");
-
-                        worker.onmessage = function(message){
-                            self.images.push({
-                                fullsize: thumbnail,
-                                thumbnail: message.data,
-                            });
-                            storedThumbs[thumbnail] = message.data;
-                            settings.set("thumbnails", storedThumbs);
-                            threadCount--;
-                            worker.terminate();
-                        };
-
-                        worker.postMessage(thumbnail);
-
-                        clearInterval(t);
-                    }, 100);
-                } else {
-                    self.images.push({
-                        fullsize: thumbnail,
-                        thumbnail: storedThumbs[thumbnail],
-                    });
-                }
-            });
+            self.loadThumbnails();
         },
     });
 })();
@@ -420,7 +443,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
+    hotAPI.reload("data-v-c2e9d962", __vue__options__)
   }
 })()}
 },{"../util/settings.js":6,"vue":10,"vue-hot-reload-api":7,"vue/dist/vue":9,"vueify/lib/insert-css":11}],5:[function(require,module,exports){

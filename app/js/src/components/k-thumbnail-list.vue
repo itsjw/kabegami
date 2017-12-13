@@ -40,7 +40,57 @@
                 };
             },
 
+            watch: {
+                thumbnails: {
+                    deep: true,
+                    handler: function(){
+                        var self = this;
+                        self.images = [];
+                        self.loadThumbnails();
+                    },
+                },
+            },
+
             methods: {
+                loadThumbnails: function(){
+                    var self = this;
+                    var storedThumbs = settings.get("thumbnails");
+                    if (!storedThumbs) storedThumbs = {};
+
+                    self.thumbnails.forEach(function(thumbnail){
+                        var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
+
+                        if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
+                            var t = setInterval(function(){
+                                if (threadCount > 1) return;
+
+                                threadCount++;
+
+                                var worker = new Worker("js/src/util/resizer.js");
+
+                                worker.onmessage = function(message){
+                                    self.images.push({
+                                        fullsize: thumbnail,
+                                        thumbnail: message.data,
+                                    });
+                                    storedThumbs[thumbnail] = message.data;
+                                    settings.set("thumbnails", storedThumbs);
+                                    threadCount--;
+                                    worker.terminate();
+                                };
+
+                                worker.postMessage(thumbnail);
+                                clearInterval(t);
+                            }, 100);
+                        } else {
+                            self.images.push({
+                                fullsize: thumbnail,
+                                thumbnail: storedThumbs[thumbnail],
+                            });
+                        }
+                    });
+                },
+
                 setAsWallpaper: function(img){
                     var self = this;
                     self.selected = img;
@@ -59,42 +109,7 @@
 
             mounted: function(){
                 var self = this;
-                var storedThumbs = settings.get("thumbnails");
-                if (!storedThumbs) storedThumbs = {};
-
-                self.thumbnails.forEach(function(thumbnail){
-                    var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
-
-                    if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
-                        var t = setInterval(function(){
-                            if (threadCount > 1) return;
-
-                            threadCount++;
-
-                            var worker = new Worker("js/src/util/resizer.js");
-
-                            worker.onmessage = function(message){
-                                self.images.push({
-                                    fullsize: thumbnail,
-                                    thumbnail: message.data,
-                                });
-                                storedThumbs[thumbnail] = message.data;
-                                settings.set("thumbnails", storedThumbs);
-                                threadCount--;
-                                worker.terminate();
-                            };
-
-                            worker.postMessage(thumbnail);
-
-                            clearInterval(t);
-                        }, 100);
-                    } else {
-                        self.images.push({
-                            fullsize: thumbnail,
-                            thumbnail: storedThumbs[thumbnail],
-                        });
-                    }
-                });
+                self.loadThumbnails();
             },
         });
     })();

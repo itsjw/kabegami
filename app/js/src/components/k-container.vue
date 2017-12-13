@@ -25,9 +25,9 @@
                     <p class="menu-label">Folders</p>
                     <ul class="menu-list">
                         <li v-for="folder in folders" @click="setCurrentFolder(folder)">
-                            <router-link :to="folder.path" :class="{'current-folder': folder === currentFolder}">
+                            <a :class="{'current-folder': folder === currentFolder}">
                                 {{ folder.name }}
-                            </router-link>
+                            </a>
                         </li>
                         <li>
                             <a @click="addFolder">
@@ -84,6 +84,7 @@
                     var self = this;
                     self.currentFolder = folder;
                     self.loadThumbnails();
+                    settings.set("current-folder", folder);
                 },
 
                 loadThumbnails: function(){
@@ -111,7 +112,14 @@
             mounted: function(){
                 var self = this;
                 self.folders = settings.get("folders") || [];
-                self.currentFolder = settings.get("current-folder") || null;
+                var current = settings.get("current-folder") || null;
+
+                self.folders.forEach(function(folder){
+                    if (current && folder.path === current.path){
+                        self.currentFolder = folder;
+                    }
+                });
+
                 if (self.currentFolder) self.loadThumbnails();
             },
         });
