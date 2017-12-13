@@ -6,7 +6,11 @@
 
 <template>
     <div id="thumbnail-list">
-        <k-thumbnail v-for="thumbnail in realThumbs" :thumbnail="thumbnail"></k-thumbnail>
+        <k-thumbnail
+            v-for="img in images"
+            :thumbnail="img.thumbnail"
+            @set-as-wallpaper="setAsWallpaper(img.fullsize)">
+        </k-thumbnail>
     </div>
 </template>
 
@@ -16,6 +20,8 @@
         var KThumbnail = require("./k-thumbnail.vue");
         var settings = require("../util/settings.js");
         var fs = window.require("fs");
+        var exec = window.require("child_process").exec;
+
         var threadCount = 0;
 
         module.exports = Vue.component("k-thumbnail-list", {
@@ -28,8 +34,24 @@
 
             data: function(){
                 return {
-                    realThumbs: [],
+                    images: [],
                 };
+            },
+
+            methods: {
+                setAsWallpaper: function(fullsize){
+                    var self = this;
+
+                    var command = settings.get("command");
+
+                    if (!command){
+                        alert("You haven't yet set the 'set wallpaper' command in the settings. Please do that first.");
+                        self.$router.push("/settings");
+                    } else {
+                        command = command.replace("$wallpaper", fullsize);
+                        exec(command);
+                    }
+                },
             },
 
             mounted: function(){
@@ -49,7 +71,10 @@
                             var worker = new Worker("js/src/util/resizer.js");
 
                             worker.onmessage = function(message){
-                                self.realThumbs.push(message.data);
+                                self.images.push({
+                                    fullsize: thumbnail,
+                                    thumbnail: message.data,
+                                });
                                 storedThumbs[thumbnail] = message.data;
                                 settings.set("thumbnails", storedThumbs);
                                 threadCount--;
@@ -61,7 +86,10 @@
                             clearInterval(t);
                         }, 100);
                     } else {
-                        self.realThumbs.push(storedThumbs[thumbnail]);
+                        self.images.push({
+                            fullsize: thumbnail,
+                            thumbnail: storedThumbs[thumbnail],
+                        });
                     }
                 });
             },

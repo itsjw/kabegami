@@ -46,7 +46,7 @@
         module.exports = Vue.component("k-settings", {
             data: function(){
                 return {
-                    command: "",
+                    command: "", // xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s $wallpaper
                 };
             },
 
@@ -69,6 +69,11 @@
                         window.location.reload();
                     }
                 },
+            },
+
+            mounted: function(){
+                var self = this;
+                self.command = settings.get("command") || "";
             },
         });
     })();

@@ -6,9 +6,7 @@
 </style>
 
 <template>
-    <span>
-        <img :src="thumbnail">
-    </span>
+    <img :src="thumbnail" @click="$emit('set-as-wallpaper')">
 </template>
 
 <script>
