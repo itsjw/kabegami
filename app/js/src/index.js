@@ -10,10 +10,12 @@
 	var KContainer = require("./components/k-container.vue");
 	var KSettings = require("./components/k-settings.vue");
 	var KThumbnailList = require("./components/k-thumbnail-list.vue");
+	var KNothing = require("./components/k-nothing.vue");
 
 	var routes = [
 		{path: "/list", component: KThumbnailList},
 		{path: "/settings", component: KSettings},
+		{path: "/nothing", component: KNothing},
 	];
 	var router = new VueRouter({routes});
 

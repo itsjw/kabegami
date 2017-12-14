@@ -24,7 +24,7 @@
 
                     <p class="menu-label">Folders</p>
                     <ul class="menu-list">
-                        <li v-for="folder in folders" @click="setCurrentFolder(folder)">
+                        <li v-for="folder in folders" @click="setCurrentFolder(folder)" @click.right="showContext(folder)">
                             <a :class="{'current-folder': folder === currentFolder}">
                                 {{ folder.name }}
                             </a>
@@ -52,9 +52,13 @@
         var Vue = require("vue/dist/vue");
         var settings = require("../util/settings.js");
         var remote = window.require("electron").remote;
+        var Menu = remote.Menu;
+        var MenuItem = remote.MenuItem;
         var fs = window.require("fs");
         var KThumbnailList = require("./k-thumbnail-list.vue");
         var extensions = ["jpg", "jpeg", "png", "bmp"];
+
+        var menu;
 
         module.exports = Vue.component("k-container", {
             data: function(){
@@ -78,6 +82,18 @@
                     self.folders.push(folder);
                     settings.set("folders", self.folders);
                     self.setCurrentFolder(folder);
+                },
+
+                removeFolder: function(folder){
+                    var self = this;
+                    self.folders.splice(self.folders.indexOf(folder), 1);
+                    settings.set("folders", self.folders);
+
+                    if (self.folders.length > 0){
+                        self.setCurrentFolder(self.folders[0]);
+                    } else {
+                        self.$router.push("/nothing");
+                    }
                 },
 
                 setCurrentFolder: function(folder){
@@ -107,11 +123,28 @@
                         self.$router.push("/list");
                     });
                 },
+
+                showContext: function(folder){
+                    var self = this;
+
+                    menu = new Menu();
+
+                    menu.append(new MenuItem({
+                        label: "Remove",
+                        click: function(){
+                            self.removeFolder(folder);
+                        },
+                    }));
+
+                    menu.popup(remote.getCurrentWindow());
+                },
             },
 
             mounted: function(){
                 var self = this;
                 self.folders = settings.get("folders") || [];
+                if (self.folders.length === 0) self.$router.push("/nothing");
+                
                 var current = settings.get("current-folder") || null;
 
                 self.folders.forEach(function(folder){
