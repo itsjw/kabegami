@@ -311,8 +311,34 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   }
 })()}
 },{"../util/settings.js":7,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],4:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbnail-list[data-v-988c3de8] {\n    line-height: 0;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbnail-list[data-v-988c3de8] {\n    line-height: 0;\n}\n\n.label[data-v-988c3de8] {\n    margin-bottom: 1rem;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -341,9 +367,11 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
     var remote = window.require("electron").remote;
     var Menu = remote.Menu;
     var MenuItem = remote.MenuItem;
+    var menu;
     var trash = window.require("trash");
 
     var threadCount = 0;
+    var escapeKeyListener;
 
     module.exports = Vue.component("k-thumbnail-list", {
         props: {
@@ -357,6 +385,8 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
             return {
                 images: [],
                 selected: null,
+                oneToBeEdited: null,
+                isShowingEditModal: false,
             };
         },
 
@@ -378,6 +408,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 if (!storedThumbs) storedThumbs = {};
 
                 var current = settings.get("current-wallpaper");
+                var tags = settings.get("tags") || {};
 
                 self.thumbnails.forEach(function(thumbnail){
                     var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
@@ -394,6 +425,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                                 self.images.push({
                                     fullsize: thumbnail,
                                     thumbnail: message.data,
+                                    tags: "",
                                 });
                                 storedThumbs[thumbnail] = message.data;
                                 settings.set("thumbnails", storedThumbs);
@@ -408,6 +440,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                         self.images.push({
                             fullsize: thumbnail,
                             thumbnail: storedThumbs[thumbnail],
+                            tags: tags[thumbnail] ? tags[thumbnail] : "",
                         });
                     }
 
@@ -438,6 +471,16 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
                 menu = new Menu();
 
+                // edit menu item
+                menu.append(new MenuItem({
+                    label: "Edit...",
+                    click: function(){
+                        self.oneToBeEdited = img;
+                        self.isShowingEditModal = true;
+                    },
+                }));
+
+                // move to trash menu item
                 menu.append(new MenuItem({
                     label: "Move to trash...",
                     click: function(){
@@ -460,11 +503,27 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
                 menu.popup(remote.getCurrentWindow());
             },
+
+            saveEdits: function(){
+                var self = this;
+                self.isShowingEditModal = false;
+                var tags = settings.get("tags") || {};
+                tags[self.oneToBeEdited.fullsize] = self.oneToBeEdited.tags;
+                settings.set("tags", tags);
+            },
         },
 
         mounted: function(){
             var self = this;
             self.loadThumbnails();
+
+            escapeKeyListener = window.addEventListener("keydown", function(e){
+                if (e.key === "Escape") self.isShowingEditModal = false;
+            });
+        },
+
+        beforeDestroy: function(){
+            window.removeEventListener("keydown", escapeKeyListener);
         },
     });
 })();
@@ -473,7 +532,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},_vm._l((_vm.images),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}))}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},[_vm._l((_vm.images),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}),_vm._v(" "),(_vm.oneToBeEdited)?_c('div',{staticClass:"modal",class:{'is-active': _vm.isShowingEditModal}},[_c('div',{staticClass:"modal-background"}),_vm._v(" "),_c('div',{staticClass:"modal-card"},[_c('header',{staticClass:"modal-card-head"},[_c('p',{staticClass:"modal-card-title"},[_vm._v("Image Properties")]),_vm._v(" "),_c('button',{staticClass:"delete",attrs:{"aria-label":"close"},on:{"click":function($event){_vm.isShowingEditModal = false}}})]),_vm._v(" "),_c('section',{staticClass:"modal-card-body"},[_c('div',{staticClass:"field"},[_c('label',{staticClass:"label"},[_vm._v("Tags")]),_vm._v(" "),_c('div',{staticClass:"control"},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.oneToBeEdited.tags),expression:"oneToBeEdited.tags"}],staticClass:"textarea",attrs:{"placeholder":""},domProps:{"value":(_vm.oneToBeEdited.tags)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.oneToBeEdited, "tags", $event.target.value)}}})])])]),_vm._v(" "),_c('footer',{staticClass:"modal-card-foot"},[_c('button',{staticClass:"button is-success",on:{"click":function($event){_vm.saveEdits()}}},[_vm._v("Save")]),_vm._v(" "),_c('button',{staticClass:"button",on:{"click":function($event){_vm.isShowingEditModal = false}}},[_vm._v("Cancel")])])])]):_vm._e()],2)}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-988c3de8"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
