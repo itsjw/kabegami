@@ -145,7 +145,7 @@
                         alert("You haven't yet set the 'set wallpaper' command in the settings. Please do that first.");
                         self.$router.push("/settings");
                     } else {
-                        command = command.replace("$wallpaper", img.fullsize);
+                        command = command.replace("$wallpaper", '"' + img.fullsize + '"');
                         exec(command);
                         settings.set("current-wallpaper", img);
                     }

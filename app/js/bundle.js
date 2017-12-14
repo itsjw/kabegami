@@ -176,7 +176,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-b2078738", __vue__options__)
+    hotAPI.reload("data-v-b2078738", __vue__options__)
   }
 })()}
 },{"../util/settings.js":7,"./k-thumbnail-list.vue":4,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],2:[function(require,module,exports){
@@ -460,7 +460,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     alert("You haven't yet set the 'set wallpaper' command in the settings. Please do that first.");
                     self.$router.push("/settings");
                 } else {
-                    command = command.replace("$wallpaper", img.fullsize);
+                    command = command.replace("$wallpaper", '"' + img.fullsize + '"');
                     exec(command);
                     settings.set("current-wallpaper", img);
                 }
