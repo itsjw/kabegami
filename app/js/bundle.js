@@ -581,13 +581,34 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 
 },{"./components/k-container.vue":1,"./components/k-nothing.vue":2,"./components/k-settings.vue":3,"./components/k-thumbnail-list.vue":4,"./util/settings.js":7,"vue-router":9,"vue/dist/vue":10}],7:[function(require,module,exports){
 (function(){
+    var fs = window.require("fs");
+    var os = window.require("os");
+
+    var path = DIR + "/settings.json";
+    var settings;
+
+    var folderExists = fs.existsSync(DIR);
+    var fileExists = fs.existsSync(path);
+
+    if (folderExists && fileExists){
+        settings = JSON.parse(fs.readFileSync(path, "utf8"));
+    } else {
+        if (!folderExists) fs.mkdirSync(DIR);
+        settings = {};
+    }
+
     module.exports = {
         set: function(key, value){
-            localStorage.setItem(key, JSON.stringify(value));
+            settings[key] = value;
+            fs.writeFileSync(path, JSON.stringify(settings), "utf8");
         },
 
         get: function(key){
-            return JSON.parse(localStorage.getItem(key));
+            try {
+                return settings[key];
+            } catch(error){
+                return null;
+            }
         },
     };
 })();
