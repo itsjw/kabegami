@@ -62,6 +62,8 @@
                     var storedThumbs = settings.get("thumbnails");
                     if (!storedThumbs) storedThumbs = {};
 
+                    var current = settings.get("current-wallpaper");
+
                     self.thumbnails.forEach(function(thumbnail){
                         var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
 
@@ -93,6 +95,10 @@
                                 thumbnail: storedThumbs[thumbnail],
                             });
                         }
+
+                        if (current && current.fullsize === thumbnail){
+                            self.selected = self.images[self.images.length-1];
+                        }
                     });
                 },
 
@@ -108,6 +114,7 @@
                     } else {
                         command = command.replace("$wallpaper", img.fullsize);
                         exec(command);
+                        settings.set("current-wallpaper", img);
                     }
                 },
 

@@ -377,6 +377,8 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 var storedThumbs = settings.get("thumbnails");
                 if (!storedThumbs) storedThumbs = {};
 
+                var current = settings.get("current-wallpaper");
+
                 self.thumbnails.forEach(function(thumbnail){
                     var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
 
@@ -408,6 +410,10 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                             thumbnail: storedThumbs[thumbnail],
                         });
                     }
+
+                    if (current && current.fullsize === thumbnail){
+                        self.selected = self.images[self.images.length-1];
+                    }
                 });
             },
 
@@ -423,6 +429,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 } else {
                     command = command.replace("$wallpaper", img.fullsize);
                     exec(command);
+                    settings.set("current-wallpaper", img);
                 }
             },
 
