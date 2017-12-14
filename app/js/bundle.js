@@ -435,9 +435,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     label: "Remove",
                     click: function(){
                         // remove full-size image
-                        trash([img.fullsize, img.thumbnail]).then(function(error){
-                            if (error) console.error(error);
-
+                        trash([img.fullsize, img.thumbnail]).then(function(){
                             // remove from list of images
                             self.images.splice(self.images.indexOf(img), 1);
 
@@ -475,7 +473,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-988c3de8", __vue__options__)
+    hotAPI.rerender("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":7,"./k-thumbnail.vue":5,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],5:[function(require,module,exports){

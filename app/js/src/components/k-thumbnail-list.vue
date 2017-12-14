@@ -120,9 +120,7 @@
                         label: "Remove",
                         click: function(){
                             // remove full-size image
-                            trash([img.fullsize, img.thumbnail]).then(function(error){
-                                if (error) console.error(error);
-
+                            trash([img.fullsize, img.thumbnail]).then(function(){
                                 // remove from list of images
                                 self.images.splice(self.images.indexOf(img), 1);
 
