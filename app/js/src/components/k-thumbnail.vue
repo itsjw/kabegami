@@ -19,7 +19,7 @@
 </style>
 
 <template>
-    <img :src="thumbnail" @click="$emit('set-as-wallpaper')" :class="{'is-active': isActive}">
+    <img :src="thumbnail" @click="$emit('set-as-wallpaper')" :class="{'is-active': isActive}" @click.right="$emit('show-context')">
 </template>
 
 <script>

@@ -10,6 +10,7 @@
             v-for="img in images"
             :thumbnail="img.thumbnail"
             @set-as-wallpaper="setAsWallpaper(img)"
+            @show-context="showContext(img)"
             :is-active="selected === img">
         </k-thumbnail>
     </div>
@@ -22,6 +23,10 @@
         var settings = require("../util/settings.js");
         var fs = window.require("fs");
         var exec = window.require("child_process").exec;
+        var remote = window.require("electron").remote;
+        var Menu = remote.Menu;
+        var MenuItem = remote.MenuItem;
+        var trash = window.require("trash");
 
         var threadCount = 0;
 
@@ -104,6 +109,32 @@
                         command = command.replace("$wallpaper", img.fullsize);
                         exec(command);
                     }
+                },
+
+                showContext: function(img){
+                    var self = this;
+
+                    menu = new Menu();
+
+                    menu.append(new MenuItem({
+                        label: "Remove",
+                        click: function(){
+                            // remove full-size image
+                            trash([img.fullsize, img.thumbnail]).then(function(error){
+                                if (error) console.error(error);
+
+                                // remove from list of images
+                                self.images.splice(self.images.indexOf(img), 1);
+
+                                // remove from database
+                                var thumbs = settings.get("thumbnails");
+                                delete thumbs[img.fullsize];
+                                settings.set("thumbnails", thumbs);
+                            });
+                        },
+                    }));
+
+                    menu.popup(remote.getCurrentWindow());
                 },
             },
 

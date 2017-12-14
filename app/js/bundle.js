@@ -176,7 +176,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-b2078738", __vue__options__)
+    hotAPI.reload("data-v-b2078738", __vue__options__)
   }
 })()}
 },{"../util/settings.js":7,"./k-thumbnail-list.vue":4,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],2:[function(require,module,exports){
@@ -330,6 +330,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 //
 //
 //
+//
 
 (function(){
     var Vue = require("vue/dist/vue");
@@ -337,6 +338,10 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
     var settings = require("../util/settings.js");
     var fs = window.require("fs");
     var exec = window.require("child_process").exec;
+    var remote = window.require("electron").remote;
+    var Menu = remote.Menu;
+    var MenuItem = remote.MenuItem;
+    var trash = window.require("trash");
 
     var threadCount = 0;
 
@@ -420,6 +425,32 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     exec(command);
                 }
             },
+
+            showContext: function(img){
+                var self = this;
+
+                menu = new Menu();
+
+                menu.append(new MenuItem({
+                    label: "Remove",
+                    click: function(){
+                        // remove full-size image
+                        trash([img.fullsize, img.thumbnail]).then(function(error){
+                            if (error) console.error(error);
+
+                            // remove from list of images
+                            self.images.splice(self.images.indexOf(img), 1);
+
+                            // remove from database
+                            var thumbs = settings.get("thumbnails");
+                            delete thumbs[img.fullsize];
+                            settings.set("thumbnails", thumbs);
+                        });
+                    },
+                }));
+
+                menu.popup(remote.getCurrentWindow());
+            },
         },
 
         mounted: function(){
@@ -433,7 +464,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},_vm._l((_vm.images),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)}}})}))}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},_vm._l((_vm.images),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}))}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-988c3de8"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -495,7 +526,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('img',{class:{'is-active': _vm.isActive},attrs:{"src":_vm.thumbnail},on:{"click":function($event){_vm.$emit('set-as-wallpaper')}}})}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('img',{class:{'is-active': _vm.isActive},attrs:{"src":_vm.thumbnail},on:{"click":function($event){_vm.$emit('set-as-wallpaper')},"contextmenu":function($event){_vm.$emit('show-context')}}})}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-c2e9d962"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -506,7 +537,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.reload("data-v-c2e9d962", __vue__options__)
+    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
   }
 })()}
 },{"../util/settings.js":7,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],6:[function(require,module,exports){
