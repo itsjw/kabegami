@@ -24,7 +24,7 @@
 
                     <p class="menu-label">Folders</p>
                     <ul class="menu-list">
-                        <li v-for="folder in folders" @click="setCurrentFolder(folder)" @click.right="showContext(folder)">
+                        <li v-for="folder in folders" @click="setCurrentFolder(folder)" @click.right="showContext(folder)" class="tooltip is-tooltip-right is-tooltip-info" :data-tooltip="folder.path">
                             <a :class="{'current-folder': folder === currentFolder}">
                                 {{ folder.name }}
                             </a>
@@ -144,7 +144,7 @@
                 var self = this;
                 self.folders = settings.get("folders") || [];
                 if (self.folders.length === 0) self.$router.push("/nothing");
-                
+
                 var current = settings.get("current-folder") || null;
 
                 self.folders.forEach(function(folder){
