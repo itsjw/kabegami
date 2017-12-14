@@ -124,8 +124,12 @@
                     menu = new Menu();
 
                     menu.append(new MenuItem({
-                        label: "Remove",
+                        label: "Move to trash...",
                         click: function(){
+                            var wasConfirmed = confirm("Are you sure that you want to move this file to the trash?");
+
+                            if (!wasConfirmed) return;
+
                             // remove full-size image
                             trash([img.fullsize, img.thumbnail]).then(function(){
                                 // remove from list of images
