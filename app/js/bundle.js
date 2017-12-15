@@ -543,7 +543,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-988c3de8", __vue__options__)
+    hotAPI.reload("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":7,"./k-thumbnail.vue":5,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],5:[function(require,module,exports){

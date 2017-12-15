@@ -4,12 +4,12 @@
     var BrowserWindow = electron.BrowserWindow;
     var path = require("path");
     var url = require("url");
-    
+
     var win;
 
     function setup(){
         win = new BrowserWindow({
-            width: 1024,
+            width: 960,
             height: 600,
             webPreferences: {
                 nodeIntegrationInWorker: true,
