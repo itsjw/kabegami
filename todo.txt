@@ -7,8 +7,6 @@ Development
 - Make folder and playlist names editable
 - Enable zoom / tile / etc. settings
 - Enable multi-monitor support
-- Enable metadata for images
-- Enable search
 - Record "play counts"
 
 ##########

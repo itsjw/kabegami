@@ -22,6 +22,17 @@
                         <li><router-link to="/settings">Settings</router-link></li>
                     </ul>
 
+                    <p class="menu-label">Search</p>
+                    <ul class="menu-list">
+                        <li>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="Search tags..." v-model="search">
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
                     <p class="menu-label">Folders</p>
                     <ul class="menu-list">
                         <li v-for="folder in folders" @click="setCurrentFolder(folder)" @click.right="showContext(folder)" class="tooltip is-tooltip-right is-tooltip-info" :data-tooltip="folder.path">
@@ -67,7 +78,27 @@
                     folders: [],
                     currentFolder: null,
                     thumbnails: [],
+                    search: "",
                 };
+            },
+
+            watch: {
+                search: function(val){
+                    var self = this;
+                    self.thumbnails = [];
+                    if (val.length < 3) return;
+
+                    var tags = settings.get("tags") || {};
+                    var thumbnails = settings.get("thumbnails") || {};
+
+                    Object.keys(thumbnails).forEach(function(fullsize){
+                        if ((tags[fullsize] && tags[fullsize].toLowerCase().includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
+                            self.thumbnails.push(fullsize);
+                        }
+                    });
+
+                    self.$router.push("/list");
+                },
             },
 
             methods: {
