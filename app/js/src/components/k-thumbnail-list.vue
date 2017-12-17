@@ -11,7 +11,7 @@
 <template>
     <div id="thumbnail-list">
         <k-thumbnail
-            v-for="img in images"
+            v-for="img in images_"
             :thumbnail="img.thumbnail"
             @set-as-wallpaper="setAsWallpaper(img)"
             @show-context="showContext(img)"
@@ -60,7 +60,7 @@
 
         module.exports = Vue.component("k-thumbnail-list", {
             props: {
-                thumbnails: {
+                images: {
                     type: Array,
                     required: true,
                 },
@@ -68,7 +68,7 @@
 
             data: function(){
                 return {
-                    images: [],
+                    images_: [],
                     selected: null,
                     oneToBeEdited: null,
                     isShowingEditModal: false,
@@ -76,26 +76,26 @@
             },
 
             watch: {
-                thumbnails: {
+                images: {
                     deep: true,
                     handler: function(){
                         var self = this;
-                        self.images = [];
-                        self.loadThumbnails();
+                        self.images_ = [];
+                        self.loadimages();
                     },
                 },
             },
 
             methods: {
-                loadThumbnails: function(){
+                loadimages: function(){
                     var self = this;
-                    var storedThumbs = settings.get("thumbnails");
+                    var storedThumbs = settings.get("images");
                     if (!storedThumbs) storedThumbs = {};
 
                     var current = settings.get("current-wallpaper");
                     var tags = settings.get("tags") || {};
 
-                    self.thumbnails.forEach(function(thumbnail){
+                    self.images.forEach(function(thumbnail){
                         var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
 
                         if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
@@ -107,13 +107,13 @@
                                 var worker = new Worker("js/src/util/resizer.js");
 
                                 worker.onmessage = function(message){
-                                    self.images.push({
+                                    self.images_.push({
                                         fullsize: thumbnail,
                                         thumbnail: message.data,
                                         tags: "",
                                     });
                                     storedThumbs[thumbnail] = message.data;
-                                    settings.set("thumbnails", storedThumbs);
+                                    settings.set("images", storedThumbs);
                                     threadCount--;
                                     worker.terminate();
                                 };
@@ -122,7 +122,7 @@
                                 clearInterval(t);
                             }, 100);
                         } else {
-                            self.images.push({
+                            self.images_.push({
                                 fullsize: thumbnail,
                                 thumbnail: storedThumbs[thumbnail],
                                 tags: tags[thumbnail] ? tags[thumbnail] : "",
@@ -130,7 +130,7 @@
                         }
 
                         if (current && current.fullsize === thumbnail){
-                            self.selected = self.images[self.images.length-1];
+                            self.selected = self.images_[self.images_.length-1];
                         }
                     });
                 },
@@ -175,13 +175,13 @@
 
                             // remove full-size image
                             trash([img.fullsize, img.thumbnail]).then(function(){
-                                // remove from list of images
-                                self.images.splice(self.images.indexOf(img), 1);
+                                // remove from list of images_
+                                self.images_.splice(self.images_.indexOf(img), 1);
 
                                 // remove from database
-                                var thumbs = settings.get("thumbnails");
+                                var thumbs = settings.get("images");
                                 delete thumbs[img.fullsize];
-                                settings.set("thumbnails", thumbs);
+                                settings.set("images", thumbs);
                             });
                         },
                     }));
@@ -200,7 +200,7 @@
 
             mounted: function(){
                 var self = this;
-                self.loadThumbnails();
+                self.loadimages();
 
                 escapeKeyListener = window.addEventListener("keydown", function(e){
                     if (e.key === "Escape") self.isShowingEditModal = false;

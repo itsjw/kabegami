@@ -1,30 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current-folder[data-v-b2078738], .current-folder[data-v-b2078738]:hover {\n    color: #ff3860 !important;\n}\n\n#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}\n\n#router-view[data-v-b2078738] {\n    padding: 2rem;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-column[data-v-b2078738] {\n    padding: 2rem;\n}\n\n#router-view[data-v-b2078738] {\n    padding: 2rem;\n}")
 ;(function(){
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -66,37 +42,107 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
     var Vue = require("vue/dist/vue");
     var settings = require("../util/settings.js");
     var remote = window.require("electron").remote;
-    var Menu = remote.Menu;
-    var MenuItem = remote.MenuItem;
     var fs = window.require("fs");
-    var KThumbnailList = require("./k-thumbnail-list.vue");
     var extensions = ["jpg", "jpeg", "png", "bmp"];
-
-    var menu;
 
     module.exports = Vue.component("k-container", {
         data: function(){
             return {
-                menuIsToggled: false,
                 folders: [],
-                currentFolder: null,
-                thumbnails: [],
-                search: "",
+                playlists: [],
+                images: [],
             };
         },
 
-        watch: {
+        methods: {
+            addFolder: function(){
+                var self = this;
+
+                // open dialog to get path
+                var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
+
+                // if nothing was selected, then return
+                if (!results) return;
+
+                // make folder object
+                var path = results[0];
+                var parts = path.split("/");
+                var name = parts[parts.length-1];
+
+                var folder = {
+                    name,
+                    path,
+                };
+
+                // add to list of folders
+                self.folders.push(folder);
+
+                // store to disk
+                settings.set("folders", self.folders);
+
+                // view thumbnails
+                self.viewFolder(folder);
+            },
+
+            viewFolder: function(folder){
+                var self = this;
+
+                // clear images list
+                self.images = [];
+
+                // get the list of files in the directory
+                fs.readdir(folder.path, function(error, files){
+                    if (error) console.error(error);
+
+                    // only add images (especially with particular extensions)
+                    files.forEach(function(file){
+                        var parts = file.split(".");
+                        var ext = parts[parts.length-1];
+
+                        if (extensions.indexOf(ext.toLowerCase()) > -1){
+                            var path = folder.path + "/" + file;
+                            self.images.push(path);
+                        }
+                    });
+
+                    // go to list page
+                    self.$router.push("/list");
+                });
+            },
+
+            removeFolder: function(folder){
+                var self = this;
+
+                // remove from folders list
+                self.folders.splice(self.folders.indexOf(folder), 1);
+
+                // store to disk
+                settings.set("folders", self.folders);
+            },
+
+            addPlaylist: function(){
+
+            },
+
+            viewPlaylist: function(playlist){
+
+            },
+
+            removePlaylist: function(playlist){
+
+            },
+
             search: function(val){
                 var self = this;
-                self.thumbnails = [];
-                if (val.length < 3) return;
+                self.images = [];
+
+                if (val.length === 0) return;
 
                 var tags = settings.get("tags") || {};
-                var thumbnails = settings.get("thumbnails") || {};
 
-                Object.keys(thumbnails).forEach(function(fullsize){
-                    if ((tags[fullsize] && tags[fullsize].toLowerCase().includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
-                        self.thumbnails.push(fullsize);
+                Object.keys(tags).forEach(function(fullsize){
+                    if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
+                        self.images.push(fullsize);
                     }
                 });
 
@@ -104,90 +150,10 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
             },
         },
 
-        methods: {
-            addFolder: function(){
-                var self = this;
-                var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
-                if (!results) return;
-                var path = results[0];
-                var parts = path.split("/");
-                var name = parts[parts.length-1];
-                var folder = {name, path};
-                self.folders.push(folder);
-                settings.set("folders", self.folders);
-                self.setCurrentFolder(folder);
-            },
-
-            removeFolder: function(folder){
-                var self = this;
-                self.folders.splice(self.folders.indexOf(folder), 1);
-                settings.set("folders", self.folders);
-
-                if (self.folders.length > 0){
-                    self.setCurrentFolder(self.folders[0]);
-                } else {
-                    self.$router.push("/nothing");
-                }
-            },
-
-            setCurrentFolder: function(folder){
-                var self = this;
-                self.currentFolder = folder;
-                self.loadThumbnails();
-                settings.set("current-folder", folder);
-            },
-
-            loadThumbnails: function(){
-                var self = this;
-
-                self.thumbnails = [];
-
-                fs.readdir(self.currentFolder.path, function(error, files){
-                    if (error) console.error(error);
-
-                    files.forEach(function(file){
-                        var parts = file.split(".");
-                        var ext = parts[parts.length-1].toLowerCase();
-
-                        if (extensions.indexOf(ext) > -1){
-                            self.thumbnails.push(self.currentFolder.path + "/" + file);
-                        }
-                    });
-
-                    self.$router.push("/list");
-                });
-            },
-
-            showContext: function(folder){
-                var self = this;
-
-                menu = new Menu();
-
-                menu.append(new MenuItem({
-                    label: "Remove",
-                    click: function(){
-                        self.removeFolder(folder);
-                    },
-                }));
-
-                menu.popup(remote.getCurrentWindow());
-            },
-        },
-
         mounted: function(){
             var self = this;
             self.folders = settings.get("folders") || [];
-            if (self.folders.length === 0) self.$router.push("/nothing");
-
-            var current = settings.get("current-folder") || null;
-
-            self.folders.forEach(function(folder){
-                if (current && folder.path === current.path){
-                    self.currentFolder = folder;
-                }
-            });
-
-            if (self.currentFolder) self.loadThumbnails();
+            self.playlists = settings.get("playlists") || [];
         },
     });
 })();
@@ -196,7 +162,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".current
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{staticClass:"tooltip is-tooltip-right is-tooltip-info",attrs:{"data-tooltip":folder.path},on:{"click":function($event){_vm.setCurrentFolder(folder)},"contextmenu":function($event){_vm.showContext(folder)}}},[_c('a',{class:{'current-folder': folder === _vm.currentFolder}},[_vm._v("\n                            "+_vm._s(folder.name)+"\n                        ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.addFolder}},[_vm._v("\n                            Import folder...\n                        ")])])],2)])]),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"thumbnails":_vm.thumbnails}})],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('k-menu',{attrs:{"folders":_vm.folders,"playlists":_vm.playlists},on:{"add-folder":_vm.addFolder,"view-folder":_vm.viewFolder,"remove-folder":_vm.removeFolder,"add-playlist":_vm.addPlaylist,"view-playlist":_vm.viewPlaylist,"remove-playlist":_vm.removePlaylist,"search":_vm.search}})],1),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"images":_vm.images}})],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -207,10 +173,115 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-b2078738", __vue__options__)
+    hotAPI.reload("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"../util/settings.js":7,"./k-thumbnail-list.vue":4,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],2:[function(require,module,exports){
+},{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],2:[function(require,module,exports){
+;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+(function(){
+    var Vue = require("vue/dist/vue");
+    var remote = window.require("electron").remote;
+    var Menu = remote.Menu;
+    var MenuItem = remote.MenuItem;
+    var menu;
+
+    module.exports = Vue.component("k-menu", {
+        props: {
+            folders: {
+                type: Array,
+                required: true,
+            },
+
+            playlists: {
+                type: Array,
+                required: true,
+            },
+        },
+
+        data: function(){
+            return {
+                search: "",
+            };
+        },
+
+        watch: {
+            search: function(val){
+                var self = this;
+                self.$emit("search", val);
+            },
+        },
+
+        methods: {
+            showContextForFolder: function(folder){
+                var self = this;
+
+                menu = new Menu();
+
+                menu.append(new MenuItem({
+                    label: "Remove",
+                    click: function(){
+                        self.$emit("remove-folder", folder);
+                    },
+                }));
+
+                menu.popup(remote.getCurrentWindow());
+            },
+        },
+    });
+})();
+
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.$emit('view-folder', folder)},"contextmenu":function($event){_vm.showContextForFolder(folder)}}},[_c('a',{class:{'current-folder': folder === _vm.currentFolder}},[_vm._v("\n                "+_vm._s(folder.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-folder')}}},[_vm._v("\n                Import folder...\n            ")])])],2)])}
+__vue__options__.staticRenderFns = []
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0e85e7cc", __vue__options__)
+  } else {
+    hotAPI.rerender("data-v-0e85e7cc", __vue__options__)
+  }
+})()}
+},{"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11}],3:[function(require,module,exports){
 ;(function(){
 //
 //
@@ -240,7 +311,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.reload("data-v-f3976f20", __vue__options__)
   }
 })()}
-},{"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10}],3:[function(require,module,exports){
+},{"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11}],4:[function(require,module,exports){
 var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#command-input[data-v-e6824be0] {\n    font-family: monospace;\n}\n\n.control[data-v-e6824be0] {\n    margin-bottom: 0.5rem;\n}\n\np[data-v-e6824be0] {\n    margin-bottom: 1.5rem;\n}\n\npre[data-v-e6824be0] {\n    margin-bottom: 1.5rem;\n}")
 ;(function(){
 //
@@ -341,7 +412,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.reload("data-v-e6824be0", __vue__options__)
   }
 })()}
-},{"../util/settings.js":7,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],4:[function(require,module,exports){
+},{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],5:[function(require,module,exports){
 var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbnail-list[data-v-988c3de8] {\n    line-height: 0;\n}\n\n.label[data-v-988c3de8] {\n    margin-bottom: 1rem;\n}")
 ;(function(){
 //
@@ -406,7 +477,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
     module.exports = Vue.component("k-thumbnail-list", {
         props: {
-            thumbnails: {
+            images: {
                 type: Array,
                 required: true,
             },
@@ -414,7 +485,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
         data: function(){
             return {
-                images: [],
+                images_: [],
                 selected: null,
                 oneToBeEdited: null,
                 isShowingEditModal: false,
@@ -422,26 +493,26 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
         },
 
         watch: {
-            thumbnails: {
+            images: {
                 deep: true,
                 handler: function(){
                     var self = this;
-                    self.images = [];
-                    self.loadThumbnails();
+                    self.images_ = [];
+                    self.loadimages();
                 },
             },
         },
 
         methods: {
-            loadThumbnails: function(){
+            loadimages: function(){
                 var self = this;
-                var storedThumbs = settings.get("thumbnails");
+                var storedThumbs = settings.get("images");
                 if (!storedThumbs) storedThumbs = {};
 
                 var current = settings.get("current-wallpaper");
                 var tags = settings.get("tags") || {};
 
-                self.thumbnails.forEach(function(thumbnail){
+                self.images.forEach(function(thumbnail){
                     var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
 
                     if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
@@ -453,13 +524,13 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                             var worker = new Worker("js/src/util/resizer.js");
 
                             worker.onmessage = function(message){
-                                self.images.push({
+                                self.images_.push({
                                     fullsize: thumbnail,
                                     thumbnail: message.data,
                                     tags: "",
                                 });
                                 storedThumbs[thumbnail] = message.data;
-                                settings.set("thumbnails", storedThumbs);
+                                settings.set("images", storedThumbs);
                                 threadCount--;
                                 worker.terminate();
                             };
@@ -468,7 +539,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                             clearInterval(t);
                         }, 100);
                     } else {
-                        self.images.push({
+                        self.images_.push({
                             fullsize: thumbnail,
                             thumbnail: storedThumbs[thumbnail],
                             tags: tags[thumbnail] ? tags[thumbnail] : "",
@@ -476,7 +547,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     }
 
                     if (current && current.fullsize === thumbnail){
-                        self.selected = self.images[self.images.length-1];
+                        self.selected = self.images_[self.images_.length-1];
                     }
                 });
             },
@@ -521,13 +592,13 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
                         // remove full-size image
                         trash([img.fullsize, img.thumbnail]).then(function(){
-                            // remove from list of images
-                            self.images.splice(self.images.indexOf(img), 1);
+                            // remove from list of images_
+                            self.images_.splice(self.images_.indexOf(img), 1);
 
                             // remove from database
-                            var thumbs = settings.get("thumbnails");
+                            var thumbs = settings.get("images");
                             delete thumbs[img.fullsize];
-                            settings.set("thumbnails", thumbs);
+                            settings.set("images", thumbs);
                         });
                     },
                 }));
@@ -546,7 +617,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
         mounted: function(){
             var self = this;
-            self.loadThumbnails();
+            self.loadimages();
 
             escapeKeyListener = window.addEventListener("keydown", function(e){
                 if (e.key === "Escape") self.isShowingEditModal = false;
@@ -563,7 +634,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},[_vm._l((_vm.images),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}),_vm._v(" "),(_vm.oneToBeEdited)?_c('div',{staticClass:"modal",class:{'is-active': _vm.isShowingEditModal}},[_c('div',{staticClass:"modal-background"}),_vm._v(" "),_c('div',{staticClass:"modal-card"},[_c('header',{staticClass:"modal-card-head"},[_c('p',{staticClass:"modal-card-title"},[_vm._v("Image Properties")]),_vm._v(" "),_c('button',{staticClass:"delete",attrs:{"aria-label":"close"},on:{"click":function($event){_vm.isShowingEditModal = false}}})]),_vm._v(" "),_c('section',{staticClass:"modal-card-body"},[_c('div',{staticClass:"field"},[_c('label',{staticClass:"label"},[_vm._v("Tags")]),_vm._v(" "),_c('div',{staticClass:"control"},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.oneToBeEdited.tags),expression:"oneToBeEdited.tags"}],staticClass:"textarea",attrs:{"placeholder":""},domProps:{"value":(_vm.oneToBeEdited.tags)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.oneToBeEdited, "tags", $event.target.value)}}})])])]),_vm._v(" "),_c('footer',{staticClass:"modal-card-foot"},[_c('button',{staticClass:"button is-success",on:{"click":function($event){_vm.saveEdits()}}},[_vm._v("Save")]),_vm._v(" "),_c('button',{staticClass:"button",on:{"click":function($event){_vm.isShowingEditModal = false}}},[_vm._v("Cancel")])])])]):_vm._e()],2)}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},[_vm._l((_vm.images_),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}),_vm._v(" "),(_vm.oneToBeEdited)?_c('div',{staticClass:"modal",class:{'is-active': _vm.isShowingEditModal}},[_c('div',{staticClass:"modal-background"}),_vm._v(" "),_c('div',{staticClass:"modal-card"},[_c('header',{staticClass:"modal-card-head"},[_c('p',{staticClass:"modal-card-title"},[_vm._v("Image Properties")]),_vm._v(" "),_c('button',{staticClass:"delete",attrs:{"aria-label":"close"},on:{"click":function($event){_vm.isShowingEditModal = false}}})]),_vm._v(" "),_c('section',{staticClass:"modal-card-body"},[_c('div',{staticClass:"field"},[_c('label',{staticClass:"label"},[_vm._v("Tags")]),_vm._v(" "),_c('div',{staticClass:"control"},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.oneToBeEdited.tags),expression:"oneToBeEdited.tags"}],staticClass:"textarea",attrs:{"placeholder":""},domProps:{"value":(_vm.oneToBeEdited.tags)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.oneToBeEdited, "tags", $event.target.value)}}})])])]),_vm._v(" "),_c('footer',{staticClass:"modal-card-foot"},[_c('button',{staticClass:"button is-success",on:{"click":function($event){_vm.saveEdits()}}},[_vm._v("Save")]),_vm._v(" "),_c('button',{staticClass:"button",on:{"click":function($event){_vm.isShowingEditModal = false}}},[_vm._v("Cancel")])])])]):_vm._e()],2)}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-988c3de8"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -577,7 +648,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.reload("data-v-988c3de8", __vue__options__)
   }
 })()}
-},{"../util/settings.js":7,"./k-thumbnail.vue":5,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],5:[function(require,module,exports){
+},{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){
 var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    border: 4px solid white;\n    width: 100px;\n    height: 67px;\n    opacity: 0.5;\n    cursor: pointer;\n    border-radius: 0.5rem;\n}\n\nimg[data-v-c2e9d962]:hover {\n    opacity: 0.75;\n}\n\nimg.is-active[data-v-c2e9d962], img.is-active[data-v-c2e9d962]:hover {\n    border: 4px solid #ff3860;\n    opacity: 1.0;\n}")
 ;(function(){
 //
@@ -639,7 +710,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.reload("data-v-c2e9d962", __vue__options__)
   }
 })()}
-},{"../util/settings.js":7,"vue":11,"vue-hot-reload-api":8,"vue/dist/vue":10,"vueify/lib/insert-css":12}],6:[function(require,module,exports){
+},{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],7:[function(require,module,exports){
 (function(){
 	var os = window.require("os");
 	window.DIR = os.homedir() + "/.kabegami";
@@ -652,7 +723,9 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	var KContainer = require("./components/k-container.vue");
 	var KSettings = require("./components/k-settings.vue");
 	var KThumbnailList = require("./components/k-thumbnail-list.vue");
+	var KThumbnail = require("./components/k-thumbnail.vue");
 	var KNothing = require("./components/k-nothing.vue");
+	var KMenu = require("./components/k-menu.vue");
 
 	var routes = [
 		{path: "/list", component: KThumbnailList},
@@ -669,7 +742,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 	};
 })();
 
-},{"./components/k-container.vue":1,"./components/k-nothing.vue":2,"./components/k-settings.vue":3,"./components/k-thumbnail-list.vue":4,"./util/settings.js":7,"vue-router":9,"vue/dist/vue":10}],7:[function(require,module,exports){
+},{"./components/k-container.vue":1,"./components/k-menu.vue":2,"./components/k-nothing.vue":3,"./components/k-settings.vue":4,"./components/k-thumbnail-list.vue":5,"./components/k-thumbnail.vue":6,"./util/settings.js":8,"vue-router":10,"vue/dist/vue":11}],8:[function(require,module,exports){
 (function(){
     var fs = window.require("fs");
     var os = window.require("os");
@@ -703,7 +776,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     };
 })();
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var Vue // late bind
 var version
 var map = (window.__VUE_HOT_MAP__ = Object.create(null))
@@ -933,7 +1006,7 @@ exports.reload = tryWrap(function (id, options) {
   })
 })
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (process){
 /**
   * vue-router v3.0.1
@@ -3562,7 +3635,7 @@ if (inBrowser && window.Vue) {
 module.exports = VueRouter;
 
 }).call(this,require('_process'))
-},{"_process":13}],10:[function(require,module,exports){
+},{"_process":14}],11:[function(require,module,exports){
 (function (global){
 /*!
  * Vue.js v2.5.9
@@ -14276,7 +14349,7 @@ return Vue$3;
 })));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v2.5.9
@@ -22140,7 +22213,7 @@ Vue$3.nextTick(function () {
 module.exports = Vue$3;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":13}],12:[function(require,module,exports){
+},{"_process":14}],13:[function(require,module,exports){
 var inserted = exports.cache = {}
 
 function noop () {}
@@ -22165,7 +22238,7 @@ exports.insert = function (css) {
   }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -22351,4 +22424,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[6]);
+},{}]},{},[7]);

@@ -1,8 +1,4 @@
 <style scoped>
-    .current-folder, .current-folder:hover {
-        color: #ff3860 !important;
-    }
-
     #menu-column {
         padding: 2rem;
     }
@@ -16,42 +12,22 @@
     <div>
         <div class="columns is-mobile">
             <div class="column is-narrow" id="menu-column">
-                <aside class="menu">
-                    <p class="menu-label">General</p>
-                    <ul class="menu-list">
-                        <li><router-link to="/settings">Settings</router-link></li>
-                    </ul>
-
-                    <p class="menu-label">Search</p>
-                    <ul class="menu-list">
-                        <li>
-                            <div class="field">
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="Search tags..." v-model="search">
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <p class="menu-label">Folders</p>
-                    <ul class="menu-list">
-                        <li v-for="folder in folders" @click="setCurrentFolder(folder)" @click.right="showContext(folder)" class="tooltip is-tooltip-right is-tooltip-info" :data-tooltip="folder.path">
-                            <a :class="{'current-folder': folder === currentFolder}">
-                                {{ folder.name }}
-                            </a>
-                        </li>
-                        <li>
-                            <a @click="addFolder">
-                                Import folder...
-                            </a>
-                        </li>
-                    </ul>
-                </aside>
+                <k-menu
+                    :folders="folders"
+                    :playlists="playlists"
+                    @add-folder="addFolder"
+                    @view-folder="viewFolder"
+                    @remove-folder="removeFolder"
+                    @add-playlist="addPlaylist"
+                    @view-playlist="viewPlaylist"
+                    @remove-playlist="removePlaylist"
+                    @search="search">
+                </k-menu>
             </div>
 
             <div class="column is-9" id="router-view">
                 <div class="container">
-                    <router-view :thumbnails="thumbnails"></router-view>
+                    <router-view :images="images"></router-view>
                 </div>
             </div>
         </div>
@@ -63,37 +39,107 @@
         var Vue = require("vue/dist/vue");
         var settings = require("../util/settings.js");
         var remote = window.require("electron").remote;
-        var Menu = remote.Menu;
-        var MenuItem = remote.MenuItem;
         var fs = window.require("fs");
-        var KThumbnailList = require("./k-thumbnail-list.vue");
         var extensions = ["jpg", "jpeg", "png", "bmp"];
-
-        var menu;
 
         module.exports = Vue.component("k-container", {
             data: function(){
                 return {
-                    menuIsToggled: false,
                     folders: [],
-                    currentFolder: null,
-                    thumbnails: [],
-                    search: "",
+                    playlists: [],
+                    images: [],
                 };
             },
 
-            watch: {
+            methods: {
+                addFolder: function(){
+                    var self = this;
+
+                    // open dialog to get path
+                    var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
+
+                    // if nothing was selected, then return
+                    if (!results) return;
+
+                    // make folder object
+                    var path = results[0];
+                    var parts = path.split("/");
+                    var name = parts[parts.length-1];
+
+                    var folder = {
+                        name,
+                        path,
+                    };
+
+                    // add to list of folders
+                    self.folders.push(folder);
+
+                    // store to disk
+                    settings.set("folders", self.folders);
+
+                    // view thumbnails
+                    self.viewFolder(folder);
+                },
+
+                viewFolder: function(folder){
+                    var self = this;
+
+                    // clear images list
+                    self.images = [];
+
+                    // get the list of files in the directory
+                    fs.readdir(folder.path, function(error, files){
+                        if (error) console.error(error);
+
+                        // only add images (especially with particular extensions)
+                        files.forEach(function(file){
+                            var parts = file.split(".");
+                            var ext = parts[parts.length-1];
+
+                            if (extensions.indexOf(ext.toLowerCase()) > -1){
+                                var path = folder.path + "/" + file;
+                                self.images.push(path);
+                            }
+                        });
+
+                        // go to list page
+                        self.$router.push("/list");
+                    });
+                },
+
+                removeFolder: function(folder){
+                    var self = this;
+
+                    // remove from folders list
+                    self.folders.splice(self.folders.indexOf(folder), 1);
+
+                    // store to disk
+                    settings.set("folders", self.folders);
+                },
+
+                addPlaylist: function(){
+
+                },
+
+                viewPlaylist: function(playlist){
+
+                },
+
+                removePlaylist: function(playlist){
+
+                },
+
                 search: function(val){
                     var self = this;
-                    self.thumbnails = [];
-                    if (val.length < 3) return;
+                    self.images = [];
+
+                    if (val.length === 0) return;
 
                     var tags = settings.get("tags") || {};
-                    var thumbnails = settings.get("thumbnails") || {};
 
-                    Object.keys(thumbnails).forEach(function(fullsize){
-                        if ((tags[fullsize] && tags[fullsize].toLowerCase().includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
-                            self.thumbnails.push(fullsize);
+                    Object.keys(tags).forEach(function(fullsize){
+                        if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
+                            self.images.push(fullsize);
                         }
                     });
 
@@ -101,90 +147,10 @@
                 },
             },
 
-            methods: {
-                addFolder: function(){
-                    var self = this;
-                    var results = remote.dialog.showOpenDialog({properties: ["openDirectory"]});
-                    if (!results) return;
-                    var path = results[0];
-                    var parts = path.split("/");
-                    var name = parts[parts.length-1];
-                    var folder = {name, path};
-                    self.folders.push(folder);
-                    settings.set("folders", self.folders);
-                    self.setCurrentFolder(folder);
-                },
-
-                removeFolder: function(folder){
-                    var self = this;
-                    self.folders.splice(self.folders.indexOf(folder), 1);
-                    settings.set("folders", self.folders);
-
-                    if (self.folders.length > 0){
-                        self.setCurrentFolder(self.folders[0]);
-                    } else {
-                        self.$router.push("/nothing");
-                    }
-                },
-
-                setCurrentFolder: function(folder){
-                    var self = this;
-                    self.currentFolder = folder;
-                    self.loadThumbnails();
-                    settings.set("current-folder", folder);
-                },
-
-                loadThumbnails: function(){
-                    var self = this;
-
-                    self.thumbnails = [];
-
-                    fs.readdir(self.currentFolder.path, function(error, files){
-                        if (error) console.error(error);
-
-                        files.forEach(function(file){
-                            var parts = file.split(".");
-                            var ext = parts[parts.length-1].toLowerCase();
-
-                            if (extensions.indexOf(ext) > -1){
-                                self.thumbnails.push(self.currentFolder.path + "/" + file);
-                            }
-                        });
-
-                        self.$router.push("/list");
-                    });
-                },
-
-                showContext: function(folder){
-                    var self = this;
-
-                    menu = new Menu();
-
-                    menu.append(new MenuItem({
-                        label: "Remove",
-                        click: function(){
-                            self.removeFolder(folder);
-                        },
-                    }));
-
-                    menu.popup(remote.getCurrentWindow());
-                },
-            },
-
             mounted: function(){
                 var self = this;
                 self.folders = settings.get("folders") || [];
-                if (self.folders.length === 0) self.$router.push("/nothing");
-
-                var current = settings.get("current-folder") || null;
-
-                self.folders.forEach(function(folder){
-                    if (current && folder.path === current.path){
-                        self.currentFolder = folder;
-                    }
-                });
-
-                if (self.currentFolder) self.loadThumbnails();
+                self.playlists = settings.get("playlists") || [];
             },
         });
     })();
