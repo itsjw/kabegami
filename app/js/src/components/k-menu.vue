@@ -52,6 +52,7 @@
                 :class="{'is-drop-target': dropTarget===playlist}">
                 <a :contenteditable="playlistToRename === playlist"
                     @keydown.enter="finishRenaming"
+                    @keydown.escape="cancelRenaming"
                     @blur="finishRenaming"
                     :ref="'playlist-' + playlist.index">
                     {{ playlist.name }}
@@ -93,6 +94,7 @@
                     search: "",
                     dropTarget: null,
                     playlistToRename: null,
+                    originalName: "",
                 };
             },
 
@@ -138,6 +140,7 @@
                     menu.append(new MenuItem({
                         label: "Rename",
                         click: function(){
+                            self.originalName = playlist.name;
                             self.startRenaming(playlist);
                         },
                     }));
@@ -194,6 +197,14 @@
                     setTimeout(function(){
                         element.focus();
                     }, 0);
+                },
+
+                cancelRenaming: function(event){
+                    var self = this;
+                    self.playlistToRename.name = self.originalName;
+                    event.target.innerText = self.originalName;
+                    self.playlistToRename = null;
+                    event.preventDefault();
                 },
 
                 finishRenaming: function(event){

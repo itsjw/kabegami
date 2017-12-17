@@ -328,6 +328,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
 //
 //
 //
+//
 
 (function(){
     var Vue = require("vue/dist/vue");
@@ -355,6 +356,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
                 search: "",
                 dropTarget: null,
                 playlistToRename: null,
+                originalName: "",
             };
         },
 
@@ -400,6 +402,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
                 menu.append(new MenuItem({
                     label: "Rename",
                     click: function(){
+                        self.originalName = playlist.name;
                         self.startRenaming(playlist);
                     },
                 }));
@@ -458,6 +461,14 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
                 }, 0);
             },
 
+            cancelRenaming: function(event){
+                var self = this;
+                self.playlistToRename.name = self.originalName;
+                event.target.innerText = self.originalName;
+                self.playlistToRename = null;
+                event.preventDefault();
+            },
+
             finishRenaming: function(event){
                 var self = this;
 
@@ -487,7 +498,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.$emit('view-folder', folder)},"contextmenu":function($event){_vm.showContextForFolder(folder)}}},[_c('a',[_vm._v("\n                "+_vm._s(folder.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-folder')}}},[_vm._v("\n                Import folder...\n            ")])])],2),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.playlists),function(playlist){return _c('li',{class:{'is-drop-target': _vm.dropTarget===playlist},on:{"click":function($event){_vm.$emit('view-playlist', playlist)},"contextmenu":function($event){_vm.showContextForPlaylist(playlist)},"dragenter":function($event){$event.preventDefault();_vm.dragEnter(playlist)},"dragover":function($event){$event.preventDefault();_vm.dragOver(playlist)},"dragleave":function($event){$event.preventDefault();_vm.dragLeave(playlist)},"drop":function($event){$event.preventDefault();_vm.drop(playlist)}}},[_c('a',{ref:'playlist-' + playlist.index,refInFor:true,attrs:{"contenteditable":_vm.playlistToRename === playlist},on:{"keydown":function($event){if(!('button' in $event)&&_vm._k($event.keyCode,"enter",13,$event.key)){ return null; }_vm.finishRenaming($event)},"blur":_vm.finishRenaming}},[_vm._v("\n                "+_vm._s(playlist.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.createPlaylist}},[_vm._v("\n                Create playlist...\n            ")])])],2)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.$emit('view-folder', folder)},"contextmenu":function($event){_vm.showContextForFolder(folder)}}},[_c('a',[_vm._v("\n                "+_vm._s(folder.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-folder')}}},[_vm._v("\n                Import folder...\n            ")])])],2),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.playlists),function(playlist){return _c('li',{class:{'is-drop-target': _vm.dropTarget===playlist},on:{"click":function($event){_vm.$emit('view-playlist', playlist)},"contextmenu":function($event){_vm.showContextForPlaylist(playlist)},"dragenter":function($event){$event.preventDefault();_vm.dragEnter(playlist)},"dragover":function($event){$event.preventDefault();_vm.dragOver(playlist)},"dragleave":function($event){$event.preventDefault();_vm.dragLeave(playlist)},"drop":function($event){$event.preventDefault();_vm.drop(playlist)}}},[_c('a',{ref:'playlist-' + playlist.index,refInFor:true,attrs:{"contenteditable":_vm.playlistToRename === playlist},on:{"keydown":[function($event){if(!('button' in $event)&&_vm._k($event.keyCode,"enter",13,$event.key)){ return null; }_vm.finishRenaming($event)},function($event){if(!('button' in $event)&&_vm._k($event.keyCode,"escape",undefined,$event.key)){ return null; }_vm.cancelRenaming($event)}],"blur":_vm.finishRenaming}},[_vm._v("\n                "+_vm._s(playlist.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":_vm.createPlaylist}},[_vm._v("\n                Create playlist...\n            ")])])],2)])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-0e85e7cc"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -498,7 +509,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-0e85e7cc", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-0e85e7cc", __vue__options__)
+    hotAPI.reload("data-v-0e85e7cc", __vue__options__)
   }
 })()}
 },{"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],3:[function(require,module,exports){
