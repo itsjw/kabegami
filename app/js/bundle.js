@@ -42,6 +42,8 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 //
 //
 //
+//
+//
 
 (function(){
     var Vue = require("vue/dist/vue");
@@ -57,6 +59,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 playlists: [],
                 images: [],
                 draggedImage: null,
+                listType: "folder",
             };
         },
 
@@ -114,6 +117,9 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                     // go to list page
                     self.$router.push("/list");
                 });
+
+                // set list type (which helps for context menus)
+                self.listType = "folder";
             },
 
             removeFolder: function(folder){
@@ -150,6 +156,9 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 var self = this;
                 self.images = playlist.images;
                 self.$router.push("/list");
+
+                // set list type (which helps for context menus)
+                self.listType = "playlist";
             },
 
             removePlaylist: function(playlist){
@@ -181,6 +190,15 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 playlist.images.push(self.draggedImage);
 
                 // store to disk
+                settings.set("playlists", self.playlists);
+            },
+
+            removeImageFromPlaylist: function(){
+                var self = this;
+
+                // image should already have been removed from list
+                // in the child (k-thumbnail-list) component;
+                // now, simply store to disk
                 settings.set("playlists", self.playlists);
             },
 
@@ -225,7 +243,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('k-menu',{attrs:{"folders":_vm.folders,"playlists":_vm.playlists},on:{"add-folder":_vm.addFolder,"view-folder":_vm.viewFolder,"remove-folder":_vm.removeFolder,"add-playlist":_vm.addPlaylist,"view-playlist":_vm.viewPlaylist,"remove-playlist":_vm.removePlaylist,"rename-playlist":_vm.renamePlaylist,"add-dragged-image-to-playlist":_vm.addDraggedImageToPlaylist,"search":_vm.search}})],1),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"images":_vm.images},on:{"image-drag":_vm.setDraggedImage}})],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('k-menu',{attrs:{"folders":_vm.folders,"playlists":_vm.playlists},on:{"add-folder":_vm.addFolder,"view-folder":_vm.viewFolder,"remove-folder":_vm.removeFolder,"add-playlist":_vm.addPlaylist,"view-playlist":_vm.viewPlaylist,"remove-playlist":_vm.removePlaylist,"rename-playlist":_vm.renamePlaylist,"add-dragged-image-to-playlist":_vm.addDraggedImageToPlaylist,"search":_vm.search}})],1),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"list-type":_vm.listType,"images":_vm.images},on:{"image-drag":_vm.setDraggedImage,"remove-image-from-playlist":_vm.removeImageFromPlaylist}})],1)])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -667,6 +685,11 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 type: Array,
                 required: true,
             },
+
+            listType: {
+                type: String,
+                required: true,
+            },
         },
 
         data: function(){
@@ -768,6 +791,18 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     },
                 }));
 
+                // if in a playlist, add the ability to
+                // remove the image from the playlist
+                if (self.listType === "playlist"){
+                    menu.append(new MenuItem({
+                        label: "Remove from playlist",
+                        click: function(){
+                            self.images.splice(self.images.indexOf(img.fullsize), 1);
+                            self.$emit("remove-image-from-playlist");
+                        },
+                    }));
+                }
+
                 // move to trash menu item
                 menu.append(new MenuItem({
                     label: "Move to trash...",
@@ -831,11 +866,11 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-988c3de8", __vue__options__)
+    hotAPI.rerender("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    border: 4px solid white;\n    width: 100px;\n    height: 67px;\n    opacity: 0.5;\n    cursor: pointer;\n    border-radius: 0.5rem;\n}\n\nimg[data-v-c2e9d962]:hover {\n    opacity: 0.75;\n}\n\nimg.is-active[data-v-c2e9d962], img.is-active[data-v-c2e9d962]:hover {\n    border: 4px solid #ff3860;\n    opacity: 1.0;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    border: 4px solid white;\n    width: 100px;\n    height: 67px;\n    /*opacity: 0.5;*/\n    cursor: pointer;\n    border-radius: 0.5rem;\n}\n\nimg[data-v-c2e9d962]:hover {\n    /*opacity: 0.75;*/\n}\n\nimg.is-active[data-v-c2e9d962], img.is-active[data-v-c2e9d962]:hover {\n    border: 4px solid #ff3860;\n    /*opacity: 1.0;*/\n}")
 ;(function(){
 //
 //
@@ -897,7 +932,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.reload("data-v-c2e9d962", __vue__options__)
+    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],7:[function(require,module,exports){

@@ -65,6 +65,11 @@
                     type: Array,
                     required: true,
                 },
+
+                listType: {
+                    type: String,
+                    required: true,
+                },
             },
 
             data: function(){
@@ -165,6 +170,18 @@
                             self.isShowingEditModal = true;
                         },
                     }));
+
+                    // if in a playlist, add the ability to
+                    // remove the image from the playlist
+                    if (self.listType === "playlist"){
+                        menu.append(new MenuItem({
+                            label: "Remove from playlist",
+                            click: function(){
+                                self.images.splice(self.images.indexOf(img.fullsize), 1);
+                                self.$emit("remove-image-from-playlist");
+                            },
+                        }));
+                    }
 
                     // move to trash menu item
                     menu.append(new MenuItem({

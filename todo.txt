@@ -3,9 +3,11 @@ Development
 ###########
 
 - Make "smart" playlists (like favorites or most-used)
+- Enable multiple files to be selected (for dragging to playlists)
 - Enable zoom / tile / etc. settings
 - Enable multi-monitor support
 - Record "play counts"
+- Add ability to remove image from playlist
 
 ##########
 Deployment

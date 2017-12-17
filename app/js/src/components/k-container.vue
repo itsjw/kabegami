@@ -30,8 +30,10 @@
             <div class="column is-9" id="router-view">
                 <div class="container">
                     <router-view
+                        :list-type="listType"
                         :images="images"
-                        @image-drag="setDraggedImage">
+                        @image-drag="setDraggedImage"
+                        @remove-image-from-playlist="removeImageFromPlaylist">
                     </router-view>
                 </div>
             </div>
@@ -54,6 +56,7 @@
                     playlists: [],
                     images: [],
                     draggedImage: null,
+                    listType: "folder",
                 };
             },
 
@@ -111,6 +114,9 @@
                         // go to list page
                         self.$router.push("/list");
                     });
+
+                    // set list type (which helps for context menus)
+                    self.listType = "folder";
                 },
 
                 removeFolder: function(folder){
@@ -147,6 +153,9 @@
                     var self = this;
                     self.images = playlist.images;
                     self.$router.push("/list");
+
+                    // set list type (which helps for context menus)
+                    self.listType = "playlist";
                 },
 
                 removePlaylist: function(playlist){
@@ -178,6 +187,15 @@
                     playlist.images.push(self.draggedImage);
 
                     // store to disk
+                    settings.set("playlists", self.playlists);
+                },
+
+                removeImageFromPlaylist: function(){
+                    var self = this;
+
+                    // image should already have been removed from list
+                    // in the child (k-thumbnail-list) component;
+                    // now, simply store to disk
                     settings.set("playlists", self.playlists);
                 },
 

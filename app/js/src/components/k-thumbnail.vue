@@ -3,18 +3,18 @@
         border: 4px solid white;
         width: 100px;
         height: 67px;
-        opacity: 0.5;
+        /*opacity: 0.5;*/
         cursor: pointer;
         border-radius: 0.5rem;
     }
 
     img:hover {
-        opacity: 0.75;
+        /*opacity: 0.75;*/
     }
 
     img.is-active, img.is-active:hover {
         border: 4px solid #ff3860;
-        opacity: 1.0;
+        /*opacity: 1.0;*/
     }
 </style>
 
