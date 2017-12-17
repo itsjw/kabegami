@@ -2,9 +2,10 @@
 Development
 ###########
 
-- Make playlists & make thumbnails draggable
+- Make playlists
+- Make thumbnails draggable
 - Make "smart" playlists (like favorites or most-used)
-- Make folder and playlist names editable
+- Make playlist names editable
 - Enable zoom / tile / etc. settings
 - Enable multi-monitor support
 - Record "play counts"
