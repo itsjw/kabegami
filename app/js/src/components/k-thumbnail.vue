@@ -19,7 +19,11 @@
 </style>
 
 <template>
-    <img :src="thumbnail" @click="$emit('set-as-wallpaper')" :class="{'is-active': isActive}" @click.right="$emit('show-context')">
+    <img :src="thumbnail"
+        @click="$emit('set-as-wallpaper')"
+        :class="{'is-active': isActive}"
+        @click.right="$emit('show-context')"
+        @dragstart="$emit('is-being-dragged')">
 </template>
 
 <script>
@@ -30,7 +34,7 @@
         module.exports = Vue.component("k-thumbnail", {
             props: {
                 thumbnail: {
-                    type: String, // path to thumbnail
+                    type: String,
                     required: true,
                 },
 

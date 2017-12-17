@@ -21,13 +21,17 @@
                     @add-playlist="addPlaylist"
                     @view-playlist="viewPlaylist"
                     @remove-playlist="removePlaylist"
+                    @add-dragged-image-to-playlist="addDraggedImageToPlaylist"
                     @search="search">
                 </k-menu>
             </div>
 
             <div class="column is-9" id="router-view">
                 <div class="container">
-                    <router-view :images="images"></router-view>
+                    <router-view
+                        :images="images"
+                        @image-drag="setDraggedImage">
+                    </router-view>
                 </div>
             </div>
         </div>
@@ -48,6 +52,7 @@
                     folders: [],
                     playlists: [],
                     images: [],
+                    draggedImage: null,
                 };
             },
 
@@ -137,7 +142,9 @@
                 },
 
                 viewPlaylist: function(playlist){
-                    console.log("Viewing playlist " + playlist.name);
+                    var self = this;
+                    self.images = playlist.images;
+                    self.$router.push("/list");
                 },
 
                 removePlaylist: function(playlist){
@@ -145,6 +152,21 @@
 
                     // remove from list
                     self.playlists.splice(self.playlists.indexOf(playlist), 1);
+
+                    // store to disk
+                    settings.set("playlists", self.playlists);
+                },
+
+                setDraggedImage: function(fullsize){
+                    var self = this;
+                    self.draggedImage = fullsize;
+                },
+
+                addDraggedImageToPlaylist: function(playlist){
+                    var self = this;
+
+                    // append to playlist
+                    playlist.images.push(self.draggedImage);
 
                     // store to disk
                     settings.set("playlists", self.playlists);

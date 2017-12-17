@@ -1,3 +1,13 @@
+<style scoped>
+    .is-drop-target {
+        background-color: #209cee;
+    }
+
+    .is-drop-target a {
+        color: white;
+    }
+</style>
+
 <template>
     <aside class="menu">
         <p class="menu-label">General</p>
@@ -32,7 +42,14 @@
 
         <p class="menu-label">Playlists</p>
         <ul class="menu-list">
-            <li v-for="playlist in playlists" @click="$emit('view-playlist', playlist)" @click.right="showContextForPlaylist(playlist)">
+            <li v-for="playlist in playlists"
+                @click="$emit('view-playlist', playlist)"
+                @click.right="showContextForPlaylist(playlist)"
+                @dragenter.prevent="dragEnter(playlist)"
+                @dragover.prevent="dragOver(playlist)"
+                @dragleave.prevent="dragLeave(playlist)"
+                @drop.prevent="drop(playlist)"
+                :class="{'is-drop-target': dropTarget===playlist}">
                 <a>
                     {{ playlist.name }}
                 </a>
@@ -70,6 +87,7 @@
             data: function(){
                 return {
                     search: "",
+                    dropTarget: null,
                 };
             },
 
@@ -111,6 +129,26 @@
                     }));
 
                     menu.popup(remote.getCurrentWindow());
+                },
+
+                dragEnter: function(playlist){
+                    var self = this;
+                    self.dropTarget = playlist;
+                },
+
+                dragOver: function(playlist){
+
+                },
+
+                dragLeave: function(playlist){
+                    var self = this;
+                    if (self.dropTarget === playlist) self.dropTarget = null;
+                },
+
+                drop: function(playlist){
+                    var self = this;
+                    self.$emit('add-dragged-image-to-playlist', playlist);
+                    self.dropTarget = null;
                 },
             },
         });

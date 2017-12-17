@@ -13,6 +13,7 @@
         <k-thumbnail
             v-for="img in images_"
             :thumbnail="img.thumbnail"
+            @is-being-dragged="$emit('image-drag', img.fullsize)"
             @set-as-wallpaper="setAsWallpaper(img)"
             @show-context="showContext(img)"
             :is-active="selected === img">
