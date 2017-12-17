@@ -121,38 +121,69 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
             },
 
             addPlaylist: function(){
+                var self = this;
 
+                // make playlist object
+                var playlist = {
+                    name: "New Playlist",
+                    images: [],
+                };
+
+                // append to playlists list
+                self.playlists.push(playlist);
+
+                // store to disk
+                settings.set("playlists", self.playlists);
+
+                // view playlist
+                self.viewPlaylist(playlist);
             },
 
             viewPlaylist: function(playlist){
-
+                console.log("Viewing playlist " + playlist.name);
             },
 
             removePlaylist: function(playlist){
+                var self = this;
 
+                // remove from list
+                self.playlists.splice(self.playlists.indexOf(playlist), 1);
+
+                // store to disk
+                settings.set("playlists", self.playlists);
             },
 
             search: function(val){
                 var self = this;
+
+                // clear images list
                 self.images = [];
 
+                // if the value is empty, return
                 if (val.length === 0) return;
 
+                // get tags and thumbnails out of storage
                 var tags = settings.get("tags") || {};
                 var thumbnails = settings.get("thumbnails") || {};
 
+                // check to see if the search value matches any
+                // of the stored tags or file names
                 Object.keys(thumbnails).forEach(function(fullsize){
                     if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
+                        // if it does, push it to the images list
                         self.images.push(fullsize);
                     }
                 });
 
+                // view the list of images
                 self.$router.push("/list");
             },
         },
 
         mounted: function(){
             var self = this;
+
+            // get the folders and playlists out of storage
             self.folders = settings.get("folders") || [];
             self.playlists = settings.get("playlists") || [];
         },
@@ -179,6 +210,20 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],2:[function(require,module,exports){
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -262,6 +307,23 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 
                 menu.popup(remote.getCurrentWindow());
             },
+
+            showContextForPlaylist: function(playlist){
+                var self = this;
+
+                menu = new Menu();
+
+                menu.append(new MenuItem({
+                    label: "Delete",
+                    click: function(){
+                        var wasConfirmed = confirm("Are you sure that you want to delete this playlist?");
+                        if (!wasConfirmed) return;
+                        self.$emit("remove-playlist", playlist);
+                    },
+                }));
+
+                menu.popup(remote.getCurrentWindow());
+            },
         },
     });
 })();
@@ -270,7 +332,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.$emit('view-folder', folder)},"contextmenu":function($event){_vm.showContextForFolder(folder)}}},[_c('a',{class:{'current-folder': folder === _vm.currentFolder}},[_vm._v("\n                "+_vm._s(folder.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-folder')}}},[_vm._v("\n                Import folder...\n            ")])])],2)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('aside',{staticClass:"menu"},[_c('p',{staticClass:"menu-label"},[_vm._v("General")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('router-link',{attrs:{"to":"/settings"}},[_vm._v("Settings")])],1)]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Search")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_c('li',[_c('div',{staticClass:"field"},[_c('div',{staticClass:"control"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.search),expression:"search"}],staticClass:"input",attrs:{"type":"text","placeholder":"Search tags..."},domProps:{"value":(_vm.search)},on:{"input":function($event){if($event.target.composing){ return; }_vm.search=$event.target.value}}})])])])]),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Folders")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.folders),function(folder){return _c('li',{on:{"click":function($event){_vm.$emit('view-folder', folder)},"contextmenu":function($event){_vm.showContextForFolder(folder)}}},[_c('a',[_vm._v("\n                "+_vm._s(folder.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-folder')}}},[_vm._v("\n                Import folder...\n            ")])])],2),_vm._v(" "),_c('p',{staticClass:"menu-label"},[_vm._v("Playlists")]),_vm._v(" "),_c('ul',{staticClass:"menu-list"},[_vm._l((_vm.playlists),function(playlist){return _c('li',{on:{"click":function($event){_vm.$emit('view-playlist', playlist)},"contextmenu":function($event){_vm.showContextForPlaylist(playlist)}}},[_c('a',[_vm._v("\n                "+_vm._s(playlist.name)+"\n            ")])])}),_vm._v(" "),_c('li',[_c('a',{on:{"click":function($event){_vm.$emit('add-playlist')}}},[_vm._v("\n                Create playlist...\n            ")])])],2)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

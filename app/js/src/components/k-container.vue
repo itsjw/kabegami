@@ -118,38 +118,69 @@
                 },
 
                 addPlaylist: function(){
+                    var self = this;
 
+                    // make playlist object
+                    var playlist = {
+                        name: "New Playlist",
+                        images: [],
+                    };
+
+                    // append to playlists list
+                    self.playlists.push(playlist);
+
+                    // store to disk
+                    settings.set("playlists", self.playlists);
+
+                    // view playlist
+                    self.viewPlaylist(playlist);
                 },
 
                 viewPlaylist: function(playlist){
-
+                    console.log("Viewing playlist " + playlist.name);
                 },
 
                 removePlaylist: function(playlist){
+                    var self = this;
 
+                    // remove from list
+                    self.playlists.splice(self.playlists.indexOf(playlist), 1);
+
+                    // store to disk
+                    settings.set("playlists", self.playlists);
                 },
 
                 search: function(val){
                     var self = this;
+
+                    // clear images list
                     self.images = [];
 
+                    // if the value is empty, return
                     if (val.length === 0) return;
 
+                    // get tags and thumbnails out of storage
                     var tags = settings.get("tags") || {};
                     var thumbnails = settings.get("thumbnails") || {};
 
+                    // check to see if the search value matches any
+                    // of the stored tags or file names
                     Object.keys(thumbnails).forEach(function(fullsize){
                         if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
+                            // if it does, push it to the images list
                             self.images.push(fullsize);
                         }
                     });
 
+                    // view the list of images
                     self.$router.push("/list");
                 },
             },
 
             mounted: function(){
                 var self = this;
+
+                // get the folders and playlists out of storage
                 self.folders = settings.get("folders") || [];
                 self.playlists = settings.get("playlists") || [];
             },
