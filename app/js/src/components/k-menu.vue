@@ -50,7 +50,10 @@
                 @dragleave.prevent="dragLeave(playlist)"
                 @drop.prevent="drop(playlist)"
                 :class="{'is-drop-target': dropTarget===playlist}">
-                <a>
+                <a :contenteditable="playlistToRename === playlist"
+                    @keydown.enter="finishRenaming"
+                    @blur="finishRenaming"
+                    :ref="'playlist-' + playlist.index">
                     {{ playlist.name }}
                 </a>
             </li>
@@ -70,6 +73,7 @@
         var Menu = remote.Menu;
         var MenuItem = remote.MenuItem;
         var menu;
+        var justLoaded = true;
 
         module.exports = Vue.component("k-menu", {
             props: {
@@ -88,6 +92,7 @@
                 return {
                     search: "",
                     dropTarget: null,
+                    playlistToRename: null,
                 };
             },
 
@@ -120,6 +125,13 @@
                     menu = new Menu();
 
                     menu.append(new MenuItem({
+                        label: "Rename",
+                        click: function(){
+                            self.startRenaming(playlist);
+                        },
+                    }));
+
+                    menu.append(new MenuItem({
                         label: "Delete",
                         click: function(){
                             var wasConfirmed = confirm("Are you sure that you want to delete this playlist?");
@@ -149,6 +161,44 @@
                     var self = this;
                     self.$emit('add-dragged-image-to-playlist', playlist);
                     self.dropTarget = null;
+                },
+
+                startRenaming: function(playlist){
+                    var self = this;
+
+                    self.playlistToRename = playlist;
+                    var element = self.$refs["playlist-" + playlist.index][0];
+                    var range = document.createRange();
+                    range.selectNodeContents(element);
+                    var sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+
+                    setTimeout(function(){
+                        element.focus();
+                    }, 0);
+                },
+
+                finishRenaming: function(event){
+                    var self = this;
+
+                    // if there's no playlist to rename
+                    // (because the event fired more than once)
+                    // then return
+                    if (!self.playlistToRename) return;
+
+                    // change name
+                    self.playlistToRename.name = event.target.innerText;
+
+                    // emit an alert to the parent component
+                    // so that changes can be written to disk
+                    self.$emit("rename-playlist");
+
+                    // reset playlistToRename variable
+                    self.playlistToRename = null;
+
+                    // prevent the enter key from adding extra stuff
+                    event.preventDefault();
                 },
             },
         });

@@ -21,6 +21,7 @@
                     @add-playlist="addPlaylist"
                     @view-playlist="viewPlaylist"
                     @remove-playlist="removePlaylist"
+                    @rename-playlist="renamePlaylist"
                     @add-dragged-image-to-playlist="addDraggedImageToPlaylist"
                     @search="search">
                 </k-menu>
@@ -129,6 +130,7 @@
                     var playlist = {
                         name: "New Playlist",
                         images: [],
+                        index: self.playlists.length,
                     };
 
                     // append to playlists list
@@ -152,6 +154,13 @@
 
                     // remove from list
                     self.playlists.splice(self.playlists.indexOf(playlist), 1);
+
+                    // store to disk
+                    settings.set("playlists", self.playlists);
+                },
+
+                renamePlaylist: function(data){
+                    var self = this;
 
                     // store to disk
                     settings.set("playlists", self.playlists);
