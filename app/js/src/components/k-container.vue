@@ -136,8 +136,9 @@
                     if (val.length === 0) return;
 
                     var tags = settings.get("tags") || {};
+                    var thumbnails = settings.get("thumbnails") || {};
 
-                    Object.keys(tags).forEach(function(fullsize){
+                    Object.keys(thumbnails).forEach(function(fullsize){
                         if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
                             self.images.push(fullsize);
                         }

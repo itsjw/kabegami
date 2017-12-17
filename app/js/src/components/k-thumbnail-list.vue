@@ -89,7 +89,7 @@
             methods: {
                 loadimages: function(){
                     var self = this;
-                    var storedThumbs = settings.get("images");
+                    var storedThumbs = settings.get("thumbnails");
                     if (!storedThumbs) storedThumbs = {};
 
                     var current = settings.get("current-wallpaper");
@@ -113,7 +113,7 @@
                                         tags: "",
                                     });
                                     storedThumbs[thumbnail] = message.data;
-                                    settings.set("images", storedThumbs);
+                                    settings.set("thumbnails", storedThumbs);
                                     threadCount--;
                                     worker.terminate();
                                 };
@@ -181,7 +181,7 @@
                                 // remove from database
                                 var thumbs = settings.get("images");
                                 delete thumbs[img.fullsize];
-                                settings.set("images", thumbs);
+                                settings.set("thumbnails", thumbs);
                             });
                         },
                     }));

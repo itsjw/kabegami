@@ -139,8 +139,9 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#menu-co
                 if (val.length === 0) return;
 
                 var tags = settings.get("tags") || {};
+                var thumbnails = settings.get("thumbnails") || {};
 
-                Object.keys(tags).forEach(function(fullsize){
+                Object.keys(thumbnails).forEach(function(fullsize){
                     if ((tags[fullsize] && tags[fullsize].includes(val.toLowerCase())) || fullsize.toLowerCase().includes(val.toLowerCase())){
                         self.images.push(fullsize);
                     }
@@ -173,7 +174,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.reload("data-v-b2078738", __vue__options__)
+    hotAPI.rerender("data-v-b2078738", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],2:[function(require,module,exports){
@@ -506,7 +507,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
         methods: {
             loadimages: function(){
                 var self = this;
-                var storedThumbs = settings.get("images");
+                var storedThumbs = settings.get("thumbnails");
                 if (!storedThumbs) storedThumbs = {};
 
                 var current = settings.get("current-wallpaper");
@@ -530,7 +531,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                                     tags: "",
                                 });
                                 storedThumbs[thumbnail] = message.data;
-                                settings.set("images", storedThumbs);
+                                settings.set("thumbnails", storedThumbs);
                                 threadCount--;
                                 worker.terminate();
                             };
@@ -598,7 +599,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                             // remove from database
                             var thumbs = settings.get("images");
                             delete thumbs[img.fullsize];
-                            settings.set("images", thumbs);
+                            settings.set("thumbnails", thumbs);
                         });
                     },
                 }));
@@ -645,7 +646,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-988c3de8", __vue__options__)
+    hotAPI.rerender("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){
