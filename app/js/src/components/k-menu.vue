@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li>
-                <a @click="$emit('add-playlist')">
+                <a @click="createPlaylist">
                     Create playlist...
                 </a>
             </li>
@@ -73,7 +73,7 @@
         var Menu = remote.Menu;
         var MenuItem = remote.MenuItem;
         var menu;
-        var justLoaded = true;
+        var renaming = false;
 
         module.exports = Vue.component("k-menu", {
             props: {
@@ -97,6 +97,17 @@
             },
 
             watch: {
+                playlists: function(){
+                    var self = this;
+
+                    if (!renaming) return;
+
+                    setTimeout(function(){
+                        renaming = false;
+                        self.startRenaming(self.playlists[self.playlists.length-1]);
+                    }, 0);
+                },
+
                 search: function(val){
                     var self = this;
                     self.$emit("search", val);
@@ -161,6 +172,12 @@
                     var self = this;
                     self.$emit('add-dragged-image-to-playlist', playlist);
                     self.dropTarget = null;
+                },
+
+                createPlaylist: function(){
+                    var self = this;
+                    renaming = true;
+                    self.$emit('add-playlist');
                 },
 
                 startRenaming: function(playlist){
