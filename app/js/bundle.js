@@ -245,7 +245,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   }
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11}],2:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop-target[data-v-0e85e7cc] {\n    background-color: #209cee;\n}\n\n.is-drop-target a[data-v-0e85e7cc] {\n    color: white;\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop-target[data-v-0e85e7cc] {\n    background-color: rgb(255, 50, 7);\n}\n\n.is-drop-target a[data-v-0e85e7cc] {\n    color: white;\n}")
 ;(function(){
 //
 //

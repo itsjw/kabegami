@@ -1,6 +1,6 @@
 <style scoped>
     .is-drop-target {
-        background-color: #209cee;
+        background-color: rgb(255, 50, 7);
     }
 
     .is-drop-target a {
