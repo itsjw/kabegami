@@ -9,7 +9,7 @@
 
     function setup(){
         win = new BrowserWindow({
-            width: 960,
+            width: 1000,
             height: 600,
             webPreferences: {
                 nodeIntegrationInWorker: true,
