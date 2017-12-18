@@ -14,6 +14,15 @@
     pre {
         margin-bottom: 1.5rem;
     }
+
+    button.is-red {
+        background-color: rgb(255, 50, 7);
+        color: white;
+    }
+
+    code {
+        color: red;
+    }
 </style>
 
 <template>
@@ -32,7 +41,7 @@
 
         <pre>set-wallpaper $wallpaper</pre>
 
-        <button @click="deleteAllSettings" class="button is-danger">Reset to factory defaults!</button>
+        <button @click="deleteAllSettings" class="button is-red">Reset to factory defaults!</button>
     </div>
 </template>
 

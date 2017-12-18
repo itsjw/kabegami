@@ -1,20 +1,24 @@
 <style scoped>
     img {
-        border: 4px solid white;
+        padding: 4px;
         width: 100px;
         height: 67px;
         /*opacity: 0.5;*/
         cursor: pointer;
-        border-radius: 0.5rem;
+        /*border-radius: 0.5rem;*/
+        /*filter: contrast(50%);*/
     }
 
     img:hover {
         /*opacity: 0.75;*/
+        /*filter: contrast(100%);*/
     }
 
     img.is-active, img.is-active:hover {
-        border: 4px solid #ff3860;
+        border: 2px solid rgb(255, 50, 7);
+        padding: 2px;
         /*opacity: 1.0;*/
+        /*filter: contrast(100%);*/
     }
 </style>
 

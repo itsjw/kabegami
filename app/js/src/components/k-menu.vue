@@ -10,12 +10,12 @@
 
 <template>
     <aside class="menu">
-        <p class="menu-label">General</p>
+        <p class="menu-label"><b>General</b></p>
         <ul class="menu-list">
             <li><router-link to="/settings">Settings</router-link></li>
         </ul>
 
-        <p class="menu-label">Search</p>
+        <p class="menu-label"><b>Search</b></p>
         <ul class="menu-list">
             <li>
                 <div class="field">
@@ -26,7 +26,7 @@
             </li>
         </ul>
 
-        <p class="menu-label">Folders</p>
+        <p class="menu-label"><b>Folders</b></p>
         <ul class="menu-list">
             <li v-for="folder in folders" @click="$emit('view-folder', folder)" @click.right="showContextForFolder(folder)">
                 <a>
@@ -40,7 +40,7 @@
             </li>
         </ul>
 
-        <p class="menu-label">Playlists</p>
+        <p class="menu-label"><b>Playlists</b></p>
         <ul class="menu-list">
             <li v-for="playlist in playlists"
                 @click="$emit('view-playlist', playlist)"

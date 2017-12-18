@@ -1,13 +1,3 @@
-<style scoped>
-    #menu-column {
-        padding: 2rem;
-    }
-
-    #router-view {
-        padding: 2rem;
-    }
-</style>
-
 <template>
     <div>
         <div class="columns is-mobile">
