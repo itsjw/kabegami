@@ -140,7 +140,6 @@
                     menu.append(new MenuItem({
                         label: "Rename",
                         click: function(){
-                            self.originalName = playlist.name;
                             self.startRenaming(playlist);
                         },
                     }));
@@ -186,6 +185,7 @@
                 startRenaming: function(playlist){
                     var self = this;
 
+                    self.originalName = playlist.name.length > 0 ? playlist.name : "New Playlist";
                     self.playlistToRename = playlist;
                     var element = self.$refs["playlist-" + playlist.index][0];
                     var range = document.createRange();

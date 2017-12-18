@@ -389,7 +389,6 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
                 menu.append(new MenuItem({
                     label: "Rename",
                     click: function(){
-                        self.originalName = playlist.name;
                         self.startRenaming(playlist);
                     },
                 }));
@@ -435,6 +434,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop
             startRenaming: function(playlist){
                 var self = this;
 
+                self.originalName = playlist.name.length > 0 ? playlist.name : "New Playlist";
                 self.playlistToRename = playlist;
                 var element = self.$refs["playlist-" + playlist.index][0];
                 var range = document.createRange();
@@ -636,7 +636,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-e6824be0", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-e6824be0", __vue__options__)
+    hotAPI.reload("data-v-e6824be0", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],5:[function(require,module,exports){
