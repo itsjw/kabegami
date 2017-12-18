@@ -7,7 +7,6 @@ Development
 - Enable zoom / tile / etc. settings
 - Enable multi-monitor support
 - Record "play counts"
-- Add ability to remove image from playlist
 
 ##########
 Deployment
