@@ -894,18 +894,8 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   }
 })()}
 },{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    padding: 4px;\n    width: 100px;\n    height: 67px;\n    /*opacity: 0.5;*/\n    cursor: pointer;\n    /*border-radius: 0.5rem;*/\n    /*filter: contrast(50%);*/\n}\n\nimg[data-v-c2e9d962]:hover {\n    /*opacity: 0.75;*/\n    /*filter: contrast(100%);*/\n}\n\nimg.is-active[data-v-c2e9d962], img.is-active[data-v-c2e9d962]:hover {\n    border: 2px solid rgb(255, 50, 7);\n    padding: 2px;\n    /*opacity: 1.0;*/\n    /*filter: contrast(100%);*/\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("img[data-v-c2e9d962] {\n    padding: 4px;\n    width: 100px;\n    height: 67px;\n    cursor: pointer;\n}\n\nimg.is-active[data-v-c2e9d962], img.is-active[data-v-c2e9d962]:hover {\n    border: 2px solid rgb(255, 50, 7);\n    padding: 2px;\n}")
 ;(function(){
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -960,7 +950,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-c2e9d962", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-c2e9d962", __vue__options__)
+    hotAPI.reload("data-v-c2e9d962", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],7:[function(require,module,exports){
