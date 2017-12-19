@@ -768,50 +768,55 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
         methods: {
             loadimages: function(){
                 var self = this;
-                var storedThumbs = settings.get("thumbnails");
-                if (!storedThumbs) storedThumbs = {};
-
-                var current = settings.get("current-wallpaper");
                 var tags = settings.get("tags") || {};
+                var thumbnails = settings.get("thumbnails") || {};
+                var queue = [];
+                var working = false;
 
-                self.images.forEach(function(thumbnail){
-                    var path = DIR + "/thumbs/" + thumbnail.split("/").join("-");
+                // decide which images need thumbnails
+                self.images.forEach(function(fullsize){
+                    var thumbnail = thumbnails[fullsize];
 
-                    if (!storedThumbs[thumbnail] || !fs.existsSync(path)){
-                        var t = setInterval(function(){
-                            if (threadCount > 1) return;
-
-                            threadCount++;
-
-                            var worker = new Worker("js/src/util/resizer.js");
-
-                            worker.onmessage = function(message){
-                                self.images_.push({
-                                    fullsize: thumbnail,
-                                    thumbnail: message.data,
-                                    tags: "",
-                                });
-                                storedThumbs[thumbnail] = message.data;
-                                settings.set("thumbnails", storedThumbs);
-                                threadCount--;
-                                worker.terminate();
-                            };
-
-                            worker.postMessage(thumbnail);
-                            clearInterval(t);
-                        }, 100);
-                    } else {
+                    if (thumbnail){
                         self.images_.push({
-                            fullsize: thumbnail,
-                            thumbnail: storedThumbs[thumbnail],
-                            tags: tags[thumbnail] ? tags[thumbnail] : "",
+                            fullsize,
+                            thumbnail,
+                            tags: tags[fullsize] || "",
                         });
-                    }
-
-                    if (current && current.fullsize === thumbnail){
-                        self.selected = self.images_[self.images_.length-1];
+                    } else {
+                        queue.push(fullsize);
                     }
                 });
+
+                var t = setInterval(function(){
+                    if (working) return;
+                    
+                    if (queue.length === 0){
+                        clearInterval(t);
+                        return;
+                    }
+
+                    working = true;
+                    var fullsize = queue.splice(0, 1)[0];
+                    var worker = new Worker("./js/src/util/resizer.js");
+
+                    worker.onmessage = function(message){
+                        var thumbnail = message.data;
+
+                        self.images_.push({
+                            fullsize,
+                            thumbnail,
+                            tags: tags[fullsize] || "",
+                        });
+
+                        thumbnails[fullsize] = thumbnail;
+                        settings.set("thumbnails", thumbnails);
+                        working = false;
+                        worker.terminate();
+                    };
+
+                    worker.postMessage(fullsize);
+                }, 100);
             },
 
             setAsWallpaper: function(img){
@@ -919,7 +924,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-988c3de8", __vue__options__)
+    hotAPI.rerender("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){
