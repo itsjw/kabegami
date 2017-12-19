@@ -9,10 +9,10 @@
         Jimp.read(url, function(error1, img){
             if (error1) console.log(error1);
 
-            img.resize(100, 67).quality(100);
+            img.resize(100, 67, Jimp.RESIZE_NEAREST_NEIGHBOR);
 
-            var name = url.split("/").join("-");
-            var path = DIR + "/thumbs/" + name;
+            var name = url.replace("/", "-").replace(".", "-");
+            var path = DIR + "/thumbs/" + name + ".jpg";
 
             img.write(path, function(error){
                 if (error) console.error(error);
