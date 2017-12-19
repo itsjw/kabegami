@@ -754,6 +754,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 selected: null,
                 oneToBeEdited: null,
                 isShowingEditModal: false,
+                tempTags: "",
             };
         },
 
@@ -859,6 +860,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     label: "Edit...",
                     click: function(){
                         self.oneToBeEdited = img;
+                        self.tempTags = img.tags;
                         self.isShowingEditModal = true;
                     },
                 }));
@@ -903,8 +905,16 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 var self = this;
                 self.isShowingEditModal = false;
                 var tags = settings.get("tags") || {};
+                self.oneToBeEdited.tags = self.tempTags;
+                self.tempTags = "";
                 tags[self.oneToBeEdited.fullsize] = self.oneToBeEdited.tags;
                 settings.set("tags", tags);
+            },
+
+            cancelEdits: function(){
+                var self = this;
+                self.tempTags = "";
+                self.isShowingEditModal = false;
             },
         },
 
@@ -913,7 +923,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
             self.loadimages();
 
             escapeKeyListener = window.addEventListener("keydown", function(e){
-                if (e.key === "Escape") self.isShowingEditModal = false;
+                if (e.key === "Escape") self.cancelEdits();
             });
         },
 
@@ -940,7 +950,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},[_vm._l((_vm.images_),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"is-being-dragged":function($event){_vm.$emit('image-drag', img.fullsize)},"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}),_vm._v(" "),(_vm.oneToBeEdited)?_c('div',{staticClass:"modal",class:{'is-active': _vm.isShowingEditModal}},[_c('div',{staticClass:"modal-background"}),_vm._v(" "),_c('div',{staticClass:"modal-card"},[_c('header',{staticClass:"modal-card-head"},[_c('p',{staticClass:"modal-card-title"},[_vm._v("Image Properties")]),_vm._v(" "),_c('button',{staticClass:"delete",attrs:{"aria-label":"close"},on:{"click":function($event){_vm.isShowingEditModal = false}}})]),_vm._v(" "),_c('section',{staticClass:"modal-card-body"},[_c('div',{staticClass:"field"},[_c('label',{staticClass:"label"},[_vm._v("Tags")]),_vm._v(" "),_c('div',{staticClass:"control"},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.oneToBeEdited.tags),expression:"oneToBeEdited.tags"}],staticClass:"textarea",attrs:{"placeholder":""},domProps:{"value":(_vm.oneToBeEdited.tags)},on:{"input":function($event){if($event.target.composing){ return; }_vm.$set(_vm.oneToBeEdited, "tags", $event.target.value)}}})])])]),_vm._v(" "),_c('footer',{staticClass:"modal-card-foot"},[_c('button',{staticClass:"button is-success",on:{"click":function($event){_vm.saveEdits()}}},[_vm._v("Save")]),_vm._v(" "),_c('button',{staticClass:"button",on:{"click":function($event){_vm.isShowingEditModal = false}}},[_vm._v("Cancel")])])])]):_vm._e()],2)}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"thumbnail-list"}},[_vm._l((_vm.images_),function(img){return _c('k-thumbnail',{attrs:{"thumbnail":img.thumbnail,"is-active":_vm.selected === img},on:{"is-being-dragged":function($event){_vm.$emit('image-drag', img.fullsize)},"set-as-wallpaper":function($event){_vm.setAsWallpaper(img)},"show-context":function($event){_vm.showContext(img)}}})}),_vm._v(" "),(_vm.oneToBeEdited)?_c('div',{staticClass:"modal",class:{'is-active': _vm.isShowingEditModal}},[_c('div',{staticClass:"modal-background"}),_vm._v(" "),_c('div',{staticClass:"modal-card"},[_c('header',{staticClass:"modal-card-head"},[_c('p',{staticClass:"modal-card-title"},[_vm._v("Image Properties")]),_vm._v(" "),_c('button',{staticClass:"delete",attrs:{"aria-label":"close"},on:{"click":function($event){_vm.isShowingEditModal = false}}})]),_vm._v(" "),_c('section',{staticClass:"modal-card-body"},[_c('div',{staticClass:"field"},[_c('label',{staticClass:"label"},[_vm._v("Tags")]),_vm._v(" "),_c('div',{staticClass:"control"},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.tempTags),expression:"tempTags"}],staticClass:"textarea",attrs:{"placeholder":""},domProps:{"value":(_vm.tempTags)},on:{"input":function($event){if($event.target.composing){ return; }_vm.tempTags=$event.target.value}}})])])]),_vm._v(" "),_c('footer',{staticClass:"modal-card-foot"},[_c('button',{staticClass:"button is-success",on:{"click":function($event){_vm.saveEdits()}}},[_vm._v("Save")]),_vm._v(" "),_c('button',{staticClass:"button",on:{"click":function($event){_vm.cancelEdits()}}},[_vm._v("Cancel")])])])]):_vm._e()],2)}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-988c3de8"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")

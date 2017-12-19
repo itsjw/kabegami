@@ -30,13 +30,13 @@
                     <div class="field">
                         <label class="label">Tags</label>
                         <div class="control">
-                            <textarea class="textarea" placeholder="" v-model="oneToBeEdited.tags"></textarea>
+                            <textarea class="textarea" placeholder="" v-model="tempTags"></textarea>
                         </div>
                     </div>
                 </section>
                 <footer class="modal-card-foot">
                     <button class="button is-success" @click="saveEdits()">Save</button>
-                    <button class="button" @click="isShowingEditModal = false">Cancel</button>
+                    <button class="button" @click="cancelEdits()">Cancel</button>
                 </footer>
             </div>
         </div>
@@ -81,6 +81,7 @@
                     selected: null,
                     oneToBeEdited: null,
                     isShowingEditModal: false,
+                    tempTags: "",
                 };
             },
 
@@ -186,6 +187,7 @@
                         label: "Edit...",
                         click: function(){
                             self.oneToBeEdited = img;
+                            self.tempTags = img.tags;
                             self.isShowingEditModal = true;
                         },
                     }));
@@ -230,8 +232,16 @@
                     var self = this;
                     self.isShowingEditModal = false;
                     var tags = settings.get("tags") || {};
+                    self.oneToBeEdited.tags = self.tempTags;
+                    self.tempTags = "";
                     tags[self.oneToBeEdited.fullsize] = self.oneToBeEdited.tags;
                     settings.set("tags", tags);
+                },
+
+                cancelEdits: function(){
+                    var self = this;
+                    self.tempTags = "";
+                    self.isShowingEditModal = false;
                 },
             },
 
@@ -240,7 +250,7 @@
                 self.loadimages();
 
                 escapeKeyListener = window.addEventListener("keydown", function(e){
-                    if (e.key === "Escape") self.isShowingEditModal = false;
+                    if (e.key === "Escape") self.cancelEdits();
                 });
             },
 
