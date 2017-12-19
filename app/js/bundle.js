@@ -1,5 +1,32 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#cols[data-v-b2078738] {}\n\n#left-col[data-v-b2078738] {\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 300px;\n    height: 100%;\n    overflow-x: hidden;\n    overflow-y: scroll;\n    padding: 2rem;\n}\n\n#right-col[data-v-b2078738] {\n    position: absolute;\n    top: 0;\n    left: 300px;\n    width: calc(100% - 300px);\n    height: 100%;\n    overflow-x: hidden;\n    overflow-y: scroll;\n    padding: 2rem;\n}")
 ;(function(){
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -232,19 +259,21 @@
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticClass:"columns is-mobile"},[_c('div',{staticClass:"column is-narrow",attrs:{"id":"menu-column"}},[_c('k-menu',{attrs:{"folders":_vm.folders,"playlists":_vm.playlists},on:{"add-folder":_vm.addFolder,"view-folder":_vm.viewFolder,"remove-folder":_vm.removeFolder,"add-playlist":_vm.addPlaylist,"view-playlist":_vm.viewPlaylist,"remove-playlist":_vm.removePlaylist,"rename-playlist":_vm.renamePlaylist,"add-dragged-image-to-playlist":_vm.addDraggedImageToPlaylist,"search":_vm.search}})],1),_vm._v(" "),_c('div',{staticClass:"column is-9",attrs:{"id":"router-view"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"list-type":_vm.listType,"images":_vm.images},on:{"image-drag":_vm.setDraggedImage,"remove-image-from-playlist":_vm.removeImageFromPlaylist}})],1)])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{attrs:{"id":"cols"}},[_c('div',{attrs:{"id":"left-col"}},[_c('k-menu',{attrs:{"folders":_vm.folders,"playlists":_vm.playlists},on:{"add-folder":_vm.addFolder,"view-folder":_vm.viewFolder,"remove-folder":_vm.removeFolder,"add-playlist":_vm.addPlaylist,"view-playlist":_vm.viewPlaylist,"remove-playlist":_vm.removePlaylist,"rename-playlist":_vm.renamePlaylist,"add-dragged-image-to-playlist":_vm.addDraggedImageToPlaylist,"search":_vm.search}})],1),_vm._v(" "),_c('div',{attrs:{"id":"right-col"}},[_c('div',{staticClass:"container"},[_c('router-view',{attrs:{"list-type":_vm.listType,"images":_vm.images},on:{"image-drag":_vm.setDraggedImage,"remove-image-from-playlist":_vm.removeImageFromPlaylist}})],1)])])])}
 __vue__options__.staticRenderFns = []
+__vue__options__._scopeId = "data-v-b2078738"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.accept()
+  module.hot.dispose(__vueify_style_dispose__)
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-b2078738", __vue__options__)
   } else {
-    hotAPI.reload("data-v-b2078738", __vue__options__)
+    hotAPI.rerender("data-v-b2078738", __vue__options__)
   }
 })()}
-},{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11}],2:[function(require,module,exports){
+},{"../util/settings.js":8,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],2:[function(require,module,exports){
 var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert(".is-drop-target[data-v-0e85e7cc] {\n    background-color: rgb(255, 50, 7);\n}\n\n.is-drop-target a[data-v-0e85e7cc] {\n    color: white;\n}")
 ;(function(){
 //
@@ -496,7 +525,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-0e85e7cc", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-0e85e7cc", __vue__options__)
+    hotAPI.reload("data-v-0e85e7cc", __vue__options__)
   }
 })()}
 },{"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],3:[function(require,module,exports){

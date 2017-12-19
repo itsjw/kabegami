@@ -1,7 +1,33 @@
+<style scoped>
+    #cols {}
+
+    #left-col {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        padding: 2rem;
+    }
+
+    #right-col {
+        position: absolute;
+        top: 0;
+        left: 300px;
+        width: calc(100% - 300px);
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        padding: 2rem;
+    }
+</style>
+
 <template>
     <div>
-        <div class="columns is-mobile">
-            <div class="column is-narrow" id="menu-column">
+        <div id="cols">
+            <div id="left-col">
                 <k-menu
                     :folders="folders"
                     :playlists="playlists"
@@ -17,7 +43,7 @@
                 </k-menu>
             </div>
 
-            <div class="column is-9" id="router-view">
+            <div id="right-col">
                 <div class="container">
                     <router-view
                         :list-type="listType"
