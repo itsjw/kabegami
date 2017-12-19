@@ -729,7 +729,10 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
     var menu;
     var trash = window.require("trash");
 
-    var threadCount = 0;
+    var queue = [];
+    var working = false;
+    var interval;
+    var worker;
     var escapeKeyListener;
 
     module.exports = Vue.component("k-thumbnail-list", {
@@ -759,7 +762,19 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 deep: true,
                 handler: function(){
                     var self = this;
-                    self.images_ = [];
+
+                    if (worker){
+                        worker.terminate();
+                        worker = null;
+                    }
+
+                    if (interval){
+                        clearInterval(interval);
+                        interval = null;
+                    }
+
+                    working = false;
+                    queue = [];
                     self.loadimages();
                 },
             },
@@ -770,8 +785,7 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                 var self = this;
                 var tags = settings.get("tags") || {};
                 var thumbnails = settings.get("thumbnails") || {};
-                var queue = [];
-                var working = false;
+                self.images_ = [];
 
                 // decide which images need thumbnails
                 self.images.forEach(function(fullsize){
@@ -788,17 +802,17 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
                     }
                 });
 
-                var t = setInterval(function(){
+                interval = setInterval(function(){
                     if (working) return;
-                    
+
                     if (queue.length === 0){
-                        clearInterval(t);
+                        clearInterval(interval);
                         return;
                     }
 
                     working = true;
                     var fullsize = queue.splice(0, 1)[0];
-                    var worker = new Worker("./js/src/util/resizer.js");
+                    worker = new Worker("./js/src/util/resizer.js");
 
                     worker.onmessage = function(message){
                         var thumbnail = message.data;
@@ -905,6 +919,19 @@ var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("#thumbna
 
         beforeDestroy: function(){
             window.removeEventListener("keydown", escapeKeyListener);
+
+            if (worker){
+                worker.terminate();
+                worker = null;
+            }
+
+            if (interval){
+                clearInterval(interval);
+                interval = null;
+            }
+
+            working = false;
+            queue = [];
         },
     });
 })();
@@ -924,7 +951,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-988c3de8", __vue__options__)
   } else {
-    hotAPI.reload("data-v-988c3de8", __vue__options__)
+    hotAPI.rerender("data-v-988c3de8", __vue__options__)
   }
 })()}
 },{"../util/settings.js":8,"./k-thumbnail.vue":6,"vue":12,"vue-hot-reload-api":9,"vue/dist/vue":11,"vueify/lib/insert-css":13}],6:[function(require,module,exports){

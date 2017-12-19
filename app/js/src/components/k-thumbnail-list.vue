@@ -56,7 +56,10 @@
         var menu;
         var trash = window.require("trash");
 
-        var threadCount = 0;
+        var queue = [];
+        var working = false;
+        var interval;
+        var worker;
         var escapeKeyListener;
 
         module.exports = Vue.component("k-thumbnail-list", {
@@ -86,7 +89,19 @@
                     deep: true,
                     handler: function(){
                         var self = this;
-                        self.images_ = [];
+
+                        if (worker){
+                            worker.terminate();
+                            worker = null;
+                        }
+
+                        if (interval){
+                            clearInterval(interval);
+                            interval = null;
+                        }
+
+                        working = false;
+                        queue = [];
                         self.loadimages();
                     },
                 },
@@ -97,8 +112,7 @@
                     var self = this;
                     var tags = settings.get("tags") || {};
                     var thumbnails = settings.get("thumbnails") || {};
-                    var queue = [];
-                    var working = false;
+                    self.images_ = [];
 
                     // decide which images need thumbnails
                     self.images.forEach(function(fullsize){
@@ -115,17 +129,17 @@
                         }
                     });
 
-                    var t = setInterval(function(){
+                    interval = setInterval(function(){
                         if (working) return;
-                        
+
                         if (queue.length === 0){
-                            clearInterval(t);
+                            clearInterval(interval);
                             return;
                         }
 
                         working = true;
                         var fullsize = queue.splice(0, 1)[0];
-                        var worker = new Worker("./js/src/util/resizer.js");
+                        worker = new Worker("./js/src/util/resizer.js");
 
                         worker.onmessage = function(message){
                             var thumbnail = message.data;
@@ -232,6 +246,19 @@
 
             beforeDestroy: function(){
                 window.removeEventListener("keydown", escapeKeyListener);
+
+                if (worker){
+                    worker.terminate();
+                    worker = null;
+                }
+
+                if (interval){
+                    clearInterval(interval);
+                    interval = null;
+                }
+
+                working = false;
+                queue = [];
             },
         });
     })();
