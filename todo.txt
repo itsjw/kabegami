@@ -1,6 +1,4 @@
-###########
 Development
-###########
 
 - Make "smart" playlists (like favorites or most-used)
 - Enable multiple files to be selected (for dragging to playlists)
@@ -9,9 +7,7 @@ Development
 - Record "play counts"
 - Enable sorting of lists
 
-##########
 Deployment
-##########
 
 - Deploy binary
 - Disable developer pane and native menus
