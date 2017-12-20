@@ -11,12 +11,16 @@
                 font-family: "Fira Code", monospace;
             }
 
-            .title {
+            #title {
                 font-size: 4rem;
             }
 
             p {
                 margin-bottom: 1.5rem;
+            }
+
+            a {
+                color: rgb(255, 50, 7);
             }
         </style>
     </head>
@@ -25,15 +29,31 @@
             <div class="container">
                 <div class="columns">
                     <div class="column is-8 is-offset-2">
-                        <h1 class="title">
+                        <h1 class="title" id="title">
                             Kabegami
                         </h1>
 
-                        <p>
-                            <b>Kabegami</b> is a cross-distro wallpaper manager for Linux. Download the latest release <a href="https://drive.google.com/open?id=1bucvsBEEgx7p91nTPR7f0P3v5yyej95q">here</a>.
-                        </p>
+                        <p><b>Kabegami</b> is a cross-distro wallpaper manager for Linux. Download the latest release <a href="https://drive.google.com/open?id=1bucvsBEEgx7p91nTPR7f0P3v5yyej95q">here</a>.</p>
 
                         <img src="./scrot.png">
+
+                        <hr>
+
+                        <h1 class="title">FAQ</h1>
+
+                        <p><b>What's up with the name?</b> <i>Kabegami</i> (壁紙) means "wallpaper" in Japanese.</p>
+
+                        <p><b>Why did you make it?</b> I'm a wallpaper nut. I have a flobbity-jillion wallpapers stored on my computer. I obsess over picking out the perfect wallpaper to suit my mood, which seems important to me because I spend so much time on my computer every day. What others call obsessive compulsion I call <i>feng shui</i>. Anyway, the built-in wallpaper pickers for each desktop environment are passable, but they typically don't allow you to delete images immediately (instead, you have to use the file manager or CLI), there's no way to add metadata to images (such as tags), there's no way to group images into "playlists," and they don't keep track of which wallpapers you tend to prefer over long periods of time. I built Kabegami because I wanted to address all of these little problems. To be clear, Kabegami doesn't have all of those features yet, but that's where it's headed.</p>
+
+                        <p><b>Couldn't you have just used a photo manager, like Shotwell or gThumb?</b> Well, crap. I hadn't thought of that till just now. But even so, sometimes it's just fun to build something, you know?</p>
+
+                        <p><b>Of what is it made?</b> It was built using <a href="https://electronjs.org/">Electron</a>, <a href="https://vuejs.org/">Vue</a>, and <a href="https://bulma.io/">Bulma</a>.</p>
+
+                        <p><b>Why doesn't it have such-and-such feature?</b> I'm working on it! Geez! Just kidding. If you want to propose a feature, please raise an issue or submit a pull request over on <a href="https://github.com/jrc03c/kabegami">GitHub</a>.</p>
+
+                        <p><b>I like you. You seem like a cool guy. How can I help you?</b> Aw, shucks. Thanks for asking. If you'd like to donate to the cause so that this project can grow and improve more quickly, please <a href="https://cash.me/$jrc03c">toss me a tip on the Cash App</a>. I'll add a PayPal link soon.</p>
+
+                        <p><b><i>Who</i> are you, by the way?</b> My name is Josh. You can find more of my stuff and my contact info on <a href="https://ameyama.com/">my site</a>.</p>
                     </div>
             </div>
         </section>
